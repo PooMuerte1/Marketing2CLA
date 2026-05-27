@@ -187,14 +187,14 @@ if filtered_df.empty:
     st.stop()
 
 # --- TABS ---
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+tab1, tab2, tab3, tab4, tab6, tab7, tab5, tab8, tab9 = st.tabs([
     "📋 Contexto y Limpieza",
     "📈 Segmentación RFM (K-Means)",
     "👥 Segmentación Sociodemográfica (LCA)",
     "🎯 Matriz de Crossover",
-    "🎁 Estrategia de Promociones",
     "🛍️ Categorías por Segmento",
     "⚠️ Pérdida de Membresías (Churn)",
+    "🎁 Estrategia de Promociones",
     "🧮 Simulador de ROI",
     "📚 Anexos"
 ])
