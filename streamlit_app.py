@@ -1185,7 +1185,14 @@ with tab8:
     micro_segments = filtered_df.groupby(['Cluster_RFM_Nombre', 'Cluster_LCA_Nombre']).size().reset_index()
     micro_segments['Opción'] = micro_segments['Cluster_RFM_Nombre'] + "  x  " + micro_segments['Cluster_LCA_Nombre']
     
-    sel_micro = st.selectbox("Seleccionar Micro-segmento Objetivo para la Campaña", options=micro_segments['Opción'].tolist())
+    _options = micro_segments['Opción'].tolist()
+    _default_idx = 0
+    for _idx, _opt in enumerate(_options):
+        if "K-Means 0" in _opt and "LCA 2" in _opt:
+            _default_idx = _idx
+            break
+            
+    sel_micro = st.selectbox("Seleccionar Micro-segmento Objetivo para la Campaña", options=_options, index=_default_idx)
     
     # Extract names
     rfm_part = sel_micro.split("  x  ")[0]
