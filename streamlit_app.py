@@ -1221,11 +1221,10 @@ with tab9:
     st.markdown('<div class="section-header">📚 Anexos Técnicos y Diagnósticos de Modelos</div>', unsafe_allow_html=True)
     st.write("Esta sección recopila todos los análisis de diagnóstico exploratorio, diagramas de outliers, transformaciones matemáticas, optimización del número de clusters, diagnósticos de verosimilitud y proyecciones de reducción de dimensionalidad implementadas en el pipeline de datos:")
 
-    sub_anexo1, sub_anexo2, sub_anexo3, sub_anexo4 = st.tabs([
+    sub_anexo1, sub_anexo2, sub_anexo3 = st.tabs([
         "📊 Exploración, Outliers y Limpieza",
         "📈 Diagnósticos del Modelo RFM (LCA vs K-Means)",
-        "👥 Diagnósticos del Modelo Demográfico (LCA vs K-Means)",
-        "💡 Guía de Pitch y Discurso Comercial"
+        "👥 Diagnósticos del Modelo Demográfico (LCA vs K-Means)"
     ])
 
     with sub_anexo1:
@@ -1718,28 +1717,4 @@ with tab9:
         > **Nota Metodológica de Modelamiento**: K-Means optimiza distancias euclidianas geométricas en una representación continua de variables dummies, por lo que indicadores geométricos como *Silhouette* siempre favorecerán de manera sesgada a K-Means. Sin embargo, **LCA es matemáticamente el modelo adecuado** porque opera sobre probabilidades multinomiales reales y optimiza la verosimilitud estadística formal (medida formalmente por BIC y Entropía). El acuerdo medido por el **Adjusted Rand Index (ARI = 0.106)** demuestra que ambos modelos proponen agrupaciones marcadamente distintas, validando la elección de LCA sobre K-Means para perfiles categóricos.
         """)
 
-    with sub_anexo4:
-        st.markdown('<div class="section-header">💡 Guía de Discurso y Pitch Ejecutivo (Tips de Presentación)</div>', unsafe_allow_html=True)
-        st.write("Esta sección consolidada reúne todas las directrices, tiempos recomendados e insights clave para presentar este dashboard de analítica avanzada ante una Junta Ejecutiva o Comité de Dirección:")
-        
-        st.markdown("""
-        ### ⏱️ Estructura del Discurso y Storytelling Comercial (10 Minutos)
-        
-        1. **Fase 1: Introducción y Limpieza de Cuentas (Minuto 0-2 - Tab 1)**
-           * *Estrategia*: Introduce el proyecto de analítica para un gran E-commerce. Explica que para maximizar el ROI de marketing, trabajaron **exclusivamente sobre la base de clientes activos (7,285 clientes)**, descartando cuentas canceladas para evitar gastar presupuesto en usuarios fugados.
-        
-        2. **Fase 2: Segmentación Transaccional K-Means (Minuto 2-4 - Tab 2)**
-           * *Estrategia*: Explica que aplicaron K-Means ($K=3$) tras estabilizar outliers del gasto con logaritmo y Z-score. Presenta los tres segmentos claros: *VIP Activo* (alto gasto, muy activo), *VIP en Riesgo* (alto gasto, inactivo) y *Bajo Valor Dormido* (bajo gasto, inactivo).
-        
-        3. **Fase 3: Segmentación Sociodemográfica LCA (Minuto 4-6 - Tab 3)**
-           * *Estrategia*: Justifica que el Análisis de Clases Latentes (LCA) es el único modelo adecuado para perfiles categóricos nominales (país, canal, dispositivo). Explica los perfiles: *Hombres Jóvenes* (Clase 0), *Adultos* (Clase 1) y *Mujeres* (Clase 2).
-        
-        4. **Fase 4: Matriz de Crossover e Inteligencia de Clientes (Minuto 6-8 - Tab 4 y 5)**
-           * *Estrategia*: Cruza ambos modelos para revelar la receptividad a ofertas (Discount Ratio). Explica la revelación del negocio: **No regales cupones a tus VIPs** (Clase K-Means 1) porque compran orgánicamente (5% de cupones). Dirige las promociones flash agresivas a la **Clase K-Means 2 (Bajo Gasto)**, que reacciona positivamente con un **39.1% de compras con descuento**.
-        
-        5. **Fase 5: Fuga y Cancelación de Membresías (Minuto 8-10 - Tab 6)**
-           * *Estrategia*: Analiza el churn de membresías (8.9% global). Advierte que la membresía **Gold tiene la mayor pérdida de clientes (9.9%)** entre los niveles pagados, requiriendo un plan de rescate proactivo, y que países como **Turquía, Polonia y Japón** son zonas de alto riesgo de deserción.
-        
-        6. **Fase 6: Simulación Financiera del ROI (Minuto 10+ - Tab 7)**
-           * *Estrategia*: Demuestra el simulador en vivo. Selecciona el micro-segmento estrella (Clase K-Means 2 x Clase LCA 0) con un descuento del 20% y muestra que genera un ROI altamente positivo, mientras que si se aplica a los VIPs, destruye valor.
-        """)
+
