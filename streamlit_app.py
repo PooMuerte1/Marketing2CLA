@@ -765,10 +765,14 @@ with tab5:
     with col_details_p:
         st.write("### Identificación del Mercado Meta")
         st.markdown("""
-        **Hallazgos Clave**:
-        - **El Segmento de Bajo Gasto es Altamente Sensible a Descuentos**: La *Clase K-Means 2 (Frecuencia Baja, Gasto Bajo)* tiene una proporción de descuento extremadamente alta (~35%-39%), lo que indica que compran fuertemente impulsados por ofertas.
-        - **El Segmento de Alto Gasto es Orgánico e Insensible a Descuentos**: Las *Clases K-Means 1 y 0 (Frecuencia Alta, Gasto Alto)* muestran un Discount Ratio muy bajo (~5%). Esto revela que compran por lealtad y necesidad orgánica, por lo que **no se debe desperdiciar margen regalando descuentos** a este segmento de alto valor.
-        - **Micro-segmento Estrella para Ofertas**: El cruce de *Clase K-Means 2 × Clase LCA 0 (Hombres Jóvenes)* es el más receptivo del E-commerce, con un **39.3%** de sus pedidos realizados con descuentos, interactuando activamente en la categoría de **Home & Kitchen**.
+        ### Mercado Meta Seleccionado: Intersección Clase LCA 2 × Clase K-Means 0 (Mujeres VIP en Riesgo)
+        Para nuestro ingreso estratégico al mercado, hemos seleccionado como **mercado meta prioritario** el micro-segmento de mayor rentabilidad potencial y urgencia de retención: la intersección **Clase LCA 2 (Mujeres, Búsqueda Orgánica, Electrónica) × Clase K-Means 0 (Frecuentes y Gasto Alto en Riesgo)**.
+
+        #### Justificación Estratégica y Comercial (STP):
+        1.  **Valor de Ciclo de Vida del Cliente (CLV) Elevadísimo**: Este segmento representa a clientas de alto valor con un gasto promedio real superior a **$2,500 USD** y una frecuencia histórica de **12 a 14 órdenes**. La captura y retención de una sola de estas clientas equivale comercialmente a activar a decenas de clientes de bajo gasto (`KM_2`).
+        2.  **Urgencia de Win-Back (Recuperación)**: Al pertenecer al segmento `KM_0` (En Riesgo), su recencia promedio supera los **90 días de inactividad**. Representan una fuga inminente de ingresos si no se actúa con rapidez.
+        3.  **Insensibilidad al Margen Tradicional (Orgánicas)**: Este grupo fue adquirido mayoritariamente mediante Búsqueda Orgánica y tiene una sensibilidad promocional extremadamente baja (Discount Ratio: **<5%**). Esto indica que valoran la exclusividad, la calidad del producto y el servicio premium por sobre los descuentos directos, lo cual permite retenerlas **sin erosionar nuestros márgenes con rebajas agresivas**.
+        4.  **Afinidad de Categoría**: Su preferencia absoluta es **Electronics**. Al ser electrónica una categoría de alto valor unitario, las tácticas recomendadas deben enfocarse en garantías extendidas gratuitas, acceso prioritario a lanzamientos y soporte premium dedicado.
         """)
         
 
@@ -795,36 +799,34 @@ with tab5:
         'Táctica Promocional': [
             'Descuentos agresivos flash de fin de semana',
             'Promociones de temporada o early-access',
-            'Programas de lealtad sin descuentos directos'
+            'Estrategia de retención VIP no-monetaria (beneficios sin descuentos directos)'
         ],
         'Siguiente Acción (Next Best Action)': [
             'Disparar alertas push en Home & Kitchen',
             'Enviar boletín de modas vía newsletter',
-            'Ofrecer envíos express y seguros extendidos'
+            'Recuperación VIP: Soporte preferente, envíos express gratis y soporte premium dedicado'
         ]
     }
     st.table(pd.DataFrame(playbook_data))
 
-    st.markdown('<div class="section-header">Recomendaciones Estratégicas de Posicionamiento</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">🎯 Conclusiones Estratégicas Generales y Recomendaciones</div>', unsafe_allow_html=True)
     c_rec1, c_rec2 = st.columns(2)
     
     with c_rec1:
-        st.markdown('<div class="card" style="border-left: 5px solid #6366F1;">', unsafe_allow_html=True)
-        st.write("### 📢 Estrategia de Promociones Eficientes")
+        st.markdown('<div class="card" style="border-left: 5px solid #6366F1; min-height: 250px;">', unsafe_allow_html=True)
+        st.write("### 📢 Segmentación Quirúrgica en Promociones")
         st.write("""
-        - **Focalización**: Dirigir el 100% de las promociones de liquidación de stock a la **Clase K-Means 2: Frecuencia Baja, Gasto Bajo (Dormidos)**, quienes reaccionan positivamente al precio bajo (poseen un 39.1% de compras con descuento).
-        - **Protección de Margen**: Evitar cupones masivos para las clases de alto valor **Clase K-Means 1 (VIP Activo)** y **Clase K-Means 0 (VIP en Riesgo)**. Para ellos, usar campañas basadas en exclusividad, lanzamientos anticipados o programas de puntos de fidelidad sin devaluar el precio.
-        - **Micro-segmento Foco**: Crear campañas flash push móviles en *Home & Kitchen* los fines de semana dirigidas específicamente a los *Hombres Jóvenes de la Clase LCA 0*.
+        - **Protección Absoluta de Margen**: No diluir márgenes ofreciendo cupones masivos a los VIPs activos (`KM_1` / `LCA_2`), quienes compran de forma orgánica y con una sensibilidad al precio extremadamente baja.
+        - **Direccionamiento de Descuentos**: Canalizar las ofertas flash agresivas y campañas de descuento únicamente hacia el segmento altamente elástico de reactivación (**Clase K-Means 2 × Clase LCA 0 - Dormidos e impulsados por precio**), donde la elasticidad responde positivamente.
         """)
         st.markdown('</div>', unsafe_allow_html=True)
         
     with c_rec2:
-        st.markdown('<div class="card" style="border-left: 5px solid #8B5CF6;">', unsafe_allow_html=True)
-        st.write("### 🎯 Posicionamiento de Entrada al Mercado")
+        st.markdown('<div class="card" style="border-left: 5px solid #8B5CF6; min-height: 250px;">', unsafe_allow_html=True)
+        st.write("### 🎯 Crecimiento en el Mercado Meta")
         st.write("""
-        - **Doble Posicionamiento de Marca**:
-          - **Para el segmento masivo (Clase K-Means 2)**: Posicionarse como el líder de **precios competitivos y rebajas inteligentes** ("Smart Buying"), impulsado por redes sociales y publicidad móvil.
-          - **Para el segmento premium y VIP (Clase K-Means 1 y Clase K-Means 0)**: Posicionarse como una marca de **calidad superior y conveniencia exclusiva**, resaltando el servicio premium, envíos rápidos y la categoría de *Electronics* o *Apparel*.
+        - **Recuperación VIP Quirúrgica**: Para capturar y retener a las **Mujeres VIP en Riesgo (LCA 2 × KM 0)**, se implementará un playbook de recuperación VIP mediante un programa de fidelidad de alto nivel.
+        - **Incentivos No Monetarios**: Priorizar el soporte prioritario, acceso anticipado y muestras exclusivas en su categoría preferida (**Electronics**) antes que recurrir a rebajas directas de precio.
         """)
         st.markdown('</div>', unsafe_allow_html=True)
 
