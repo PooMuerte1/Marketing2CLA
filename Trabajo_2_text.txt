@@ -1,0 +1,173 @@
+--- Page 1 ---
+Universidad de Concepción 
+Facultad de Ingeniería 
+Departamento de Ingeniería Industrial 
+ 
+Trabajo 2 Marketing 2026-1: Segmentación, Mercados Meta y 
+Posicionamiento 
+Profesor: 
+Juan Carlos Caro ( juancaros@udec.cl )  
+ 
+Ayudantes: 
+Joaquín Aravena ( joaravena2021@udec.cl )  
+Juan José Altamirano ( JALTAMIRA2019@udec.cl ) 
+Matias Arriagada ( matiaarriagada2022@udec.cl )  
+ 
+ 
+Objetivo: Realizar una segmentación de mercado para un bien (producto o servicio) a partir de un set de 
+datos, y analizar una estrategia potencial de posicionamiento para los mercados meta que se consideren 
+relevantes, desde la posición de una empresa que desea entrar al mercado. 
+ 
+Actividad: Los estudiantes deberán considerar las características del bien y de la fuente de información 
+para decidir sobre el mejor modelo empírico para el análisis, así como la interpretación de los resultados. 
+Cada mercado tendrá asignado un set de datos y bien diferente. El grupo debe hacer una presentación de 
+sus resultados (máximo 10 minutos, incluida la sección de preguntas) describiendo el contexto del 
+mercado, características de las variables en la base de datos, los ajustes realizados a la base de datos para 
+la estimación (e.g. limpieza de datos, creación de variables), el método de análisis, los resultados 
+encontrados y las recomendaciones que se pueden realizar respecto del mercado. Para la limpieza de 
+datos y estimación se debe usar un Notebook de Python y el código debe ser entregado junto con el 
+informe autocontenido en el código (tiene que ser posible ejecutar el código en el set de datos sin errores). 
+ 
+NOTA IMPORTANTE: Los datos entregados son data original, sin procesar. Lo anterior implica que se deben 
+limpiar y clasificar las variables de forma adecuada, para poder ser analizadas posteriormente. 
+ 
+Entregable: Codigo con el desarrollo del trabajo en formato IPYNB (informe con resultados). Presentación 
+en formato PPT con el resumen del trabajo (o script .PY para Streamlit), un archivo XLSX con el resumen 
+de la distribución de tareas y cumplimiento de actividades, y un archivo .DOCX con el resumen de la toma 
+de decisiones y acuerdos alcanzados, que además incluye las interacciones con IA Generativa (los template 
+se proveerán en el curso. Deben producirse tablas de descripción básica de los datos, así como tablas o 
+figuras de resultados. Cualquier contenido adicional sobre el límite de páginas puede ser incluido como 
+anexo.  
+ 
+Tiempo: Los documentos pueden ser modificados vía Canvas por un integrante del grupo con plazo 
+máximo el 27 de mayo a las 15:00 hrs. Las presentaciones se calendarizaran durante las practicas de la 
+semana correspondiente.  
+--- Page 2 ---
+Universidad de Concepción 
+Facultad de Ingeniería 
+Departamento de Ingeniería Industrial 
+ 
+ 
+ 
+Instrucciones generales 
+ 
+Estimar modelos de segmentación tanto socio-demográfica como RFM para caracterizar los mercados 
+meta relevantes a cada cliente. Debe compararse los modelos usando alguno de los métodos vistos en 
+clases. En cada caso, el grupo debe (1) elegir las variables relevantes en cada modelo, (2) determinar el 
+número óptimo de segmentos, (3) caracterizar los segmentos (nombrarlos) y (4) determinar aquellos 
+segmentos (mercados meta) relevantes para la empresa. Las conclusiones deben hacer referencia a la 
+estrategia de posicionamiento de la empresa para capturar los mercados meta relevantes, en base a sus 
+análisis. NOTA IMPORTANTE: NO PUEDEN USAR IA GENERATIVA PARA CARACTERIZAR Y/O NOMBRAR 
+LOS SEGMENTOS DE MERCADO . 
+ 
+Mercado 1:  E-commerce global   
+ 
+El registro de transacciones en costumers.csv y orders.csv  muestra las compras y detalles de clientes de 
+un gran E-commerce global. Su cliente, la empresa en cuestión, está interesada en determinar segmentos 
+de mercado que sean más receptivos a las promociones, considerando la categoría de producto. El cliente 
+esta abierto a escuchar sobre otros mercados meta relevantes. Ver diccionario abajo. 
+ 
+Costumers.csv 
+    "customer_id": "Unique identifier for a customer", 
+    "country": "Country of the customer", 
+    "age": "Age of the customer", 
+    "gender": "Gender of the customer", 
+    "membership_tier": "Membership tier of the customer", 
+    "registration_date": "Date when the customer registered", 
+    "total_orders": "Total number of orders made", 
+    "total_spend_usd": "Total spending in USD", 
+    "avg_order_value_usd": "Average value of an order in USD", 
+    "days_since_last_purchase": "Days since the last purchase", 
+    "preferred_category": "Preferred shopping category", 
+    "preferred_device": "Preferred device for shopping", 
+    "preferred_payment_method": "Preferred payment method", 
+    "acquisition_channel": "Channel through which the customer was acquired", 
+    "reviews_given": "Number of reviews given by the customer", 
+    "avg_review_score": "Average score of reviews given", 
+    "returns_made": "Number of returns made", 
+    "wishlist_items": "Number of items in the wishlist", 
+    "newsletter_subscribed": "Indicates if subscribed to newsletter", 
+--- Page 3 ---
+Universidad de Concepción 
+Facultad de Ingeniería 
+Departamento de Ingeniería Industrial 
+ 
+    "churned": "Indicates if the customer has ended their membership" 
+ 
+ 
+Orders.csv 
+    "order_id": "Unique identifier for the order", 
+    "customer_id": "Unique identifier for the customer", 
+    "order_date": "Date when the order was placed", 
+    "year": "Year of the order", 
+    "month": "Month of the order", 
+    "quarter": "Quarter of the year", 
+    "day_of_week": "Day of the week", 
+    "product_name": "Name of the product", 
+    "category": "Category of the product", 
+    "unit_price_usd": "Price per unit in USD", 
+    "quantity": "Quantity of the product ordered", 
+    "subtotal_usd": "Subtotal amount in USD", 
+    "discount_pct": "Discount percentage applied", 
+    "discount_amount_usd": "Discount amount in USD", 
+    "shipping_fee_usd": "Shipping fee in USD", 
+    "tax_pct": "Tax percentage applied", 
+    "tax_amount_usd": "Tax amount in USD", 
+    "total_amount_usd": "Total amount in USD", 
+    "payment_method": "Payment method used", 
+    "device_used": "Device used for the order", 
+    "delivery_days": "Number of days for delivery", 
+    "delivery_date": "Date of delivery", 
+    "order_status": "Status of the order", 
+    "returned": "Indicates if the order was returned", 
+    "customer_rating": "Customer rating for the order", 
+    "session_duration_minutes": "Session duration in minutes", 
+    "pages_viewed_before_purchase": "Number of pages viewed before purchase", 
+    "is_repeat_customer": "Indicates if the customer is a repeat customer" 
+ 
+Mercado 2:  Starbucks America  
+ 
+El registro de transacciones en s_order.csv  muestra el comportamiento de clientes en diversas sucursales 
+de Starbucks en distintas regiones de Estados Unidos. Su cliente es un inversionista que evalúa abrir nuevas 
+franquicias de Starbucks en diversos puntos del país, donde existan consumidores de alta actividad, 
+aunque está abierta a escuchar sobre otros mercados meta relevantes. Ver diccionario abajo.   
+ 
+--- Page 4 ---
+Universidad de Concepción 
+Facultad de Ingeniería 
+Departamento de Ingeniería Industrial 
+ 
+S_order.csv 
+    "customer_id": "Unique identifier for the customer", 
+    "order_id": "Unique identifier for the order", 
+    "order_date": "Date when the order was placed", 
+    "order_time": "Time when the order was placed", 
+    "day_of_week": "Day of the week of the order", 
+    "order_channel": "Channel through which the order was placed", 
+    "store_id": "Unique identifier for the store", 
+    "store_location_type": "Type of store location (e.g., Urban, Suburban)", 
+    "region": "Geographical region of the store", 
+    "customer_age_group": "Age group of the customer", 
+    "customer_gender": "Gender of the customer", 
+    "is_rewards_member": "Indicates if the customer is a rewards member", 
+    "cart_size": "Number of items in the cart", 
+    "num_customizations": "Number of customizations in the order", 
+    "total_spend": "Total amount spent on the order", 
+    "fulfillment_time_min": "Time taken to fulfill the order (in minutes)", 
+    "drink_category": "Category of the drink ordered", 
+    "has_food_item": "Indicates if the order includes a food item", 
+    "order_ahead": "Indicates if the order was placed ahead", 
+    "customer_satisfaction": "Customer satisfaction rating (e.g., 1-5)" 
+ 
+ 
+Asignación de grupos 
+Mercado 1  Mercado 2  
+Grupo17 Grupo18 
+Grupo19 Grupo20 
+Grupo21 Grupo22 
+Grupo23 Grupo24 
+Grupo25 Grupo26 
+Grupo27 Grupo28 
+Grupo29 Grupo30 
+Grupo31 Grupo32 
+ 

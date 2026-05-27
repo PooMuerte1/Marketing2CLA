@@ -1,0 +1,1027 @@
+
+====================================
+INSPECTING: Dataset_filtrado-2.ipynb
+====================================
+Cell 3 [CODE]:
+# Instalar librerías necesarias (ejecutar solo una vez si no las tienen)
+# !pip install pandas numpy matplotlib seaborn scikit-learn stepmix
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configuración visual para los gráficos
+sns.set_theme(style="whitegrid")
+plt.rcParams['figure.figsize'] = (10, 6)
+----------------------------------------
+Cell 7 [CODE]:
+# --- ANÁLISIS DE RETENCIÓN Y MEMBRESÍAS ---
+
+# 1. Preparar los datos para el primer gráfico (Estado general de la membresía)
+# Asumimos que 0 = Activo (No churned) y 1 = Cancelado (Churned)
+churn_counts = df_customers['churned'].value_counts()
+labels_churn = ['Activos', 'Cancelados']
+colores_churn = ['#66b3ff', '#ff9999'] # Azul claro para activos, rojo/rosado para cancelados
+
+# 2. Preparar los datos para el segundo gráfico (Tipos de membresía SOLO en activos)
+clientes_activos = df_customers[df_customers['churned'] == 0]
+tier_counts = clientes_activos['membership_tier'].value_counts()
+colores_tier = ['#ffcc99', '#99ff99', '#c2c2f0', '#ffb3e6']
+
+# --- CREACIÓN DE LOS GRÁFICOS ---
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+# Gráfico 1: Tasa de Retención
+axes[0].pie(churn_counts, 
+            labels=labels_churn, 
+            autopct='%1.1f%%', 
+            startangle=90, 
+            colors=colores_churn,
+            explode=(0.1, 0), # Separa un poco la rebanada de activos para destacar
+            shadow=True)
+axes[0].set_title('Estado General de las Cuentas (Retención vs Churn)', fontsize=14, fontweight='bold')
+
+# Gráfico 2: Tipos de Membresía en clientes activos
+axes[1].pie(tier_counts, 
+            labels=tier_counts.index, 
+            autopct='%1.1f%%', 
+            startangle=90, 
+            colors=colores_tier,
+            shadow=True)
+axes[1].set_title('Distribución de Niveles de Membresía\n(Solo Clientes Activos)', fontsize=14, fontweight='bold')
+
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 8 [CODE]:
+# --- VISUALIZACIÓN DE OUTLIERS: MODELOS RFM Y SOCIODEMOGRÁFICO ---
+
+# Crear una figura con 4 subgráficos (2 filas y 2 columnas)
+fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+
+# --- 1. MODELO RFM ---
+
+# Monto (Monetary)
+sns.boxplot(y=df_customers['total_spend_usd'], ax=axes[0, 0], color='#87CEFA')
+axes[0, 0].set_title('RFM - Monto: Gasto Total (USD)', fontsize=12, fontweight='bold')
+axes[0, 0].set_ylabel('Dólares ($)')
+
+# Frecuencia (Frequency)
+sns.boxplot(y=df_customers['total_orders'], ax=axes[0, 1], color='#98FB98')
+axes[0, 1].set_title('RFM - Frecuencia: Cantidad de Órdenes', fontsize=12, fontweight='bold')
+axes[0, 1].set_ylabel('N° de Órdenes')
+
+# Recencia (Recency)
+sns.boxplot(y=df_customers['days_since_last_purchase'], ax=axes[1, 0], color='#FA8072')
+axes[1, 0].set_title('RFM - Recencia: Días desde la última compra', fontsize=12, fontweight='bold')
+axes[1, 0].set_ylabel('Días')
+
+
+# --- 2. MODELO SOCIODEMOGRÁFICO ---
+
+# Edad (Age)
+sns.boxplot(y=df_customers['age'], ax=axes[1, 1], color='#DDA0DD')
+axes[1, 1].set_title('Sociodemográfico - Edad de los Clientes', fontsize=12, fontweight='bold')
+axes[1, 1].set_ylabel('Años')
+
+# Ajustes visuales generales
+plt.suptitle('Detección de Valores Atípicos (Outliers) para Segmentación', fontsize=16, fontweight='bold')
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 11 [MARKDOWN]:
+#### MODELO RFM:
+##### - Si utilizarán K-means, entonces tienen que considerar la estandarización de los datos de resencia, frecuencia y Dinero. 
+##### - Si utilizarán clase latente, se recomienda volver a categoricas. Ej: Recencia: Activo (compró hace poco), En Riesgo, Dormido. Frecuencia: Compra Ú
+----------------------------------------
+Cell 13 [CODE]:
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+# --- 1. TRANSFORMACIÓN LOGARÍTMICA (Para comprimir outliers) ---
+
+# Usamos np.log1p (logaritmo de 1+x) en lugar de np.log para evitar errores si algún valor es 0
+columnas_rfm = ['days_since_last_purchase', 'total_orders', 'total_spend_usd']
+columnas_log = ['recency_log', 'frequency_log', 'monetary_log']
+
+# Aplicamos el logaritmo
+df_customers[columnas_log] = np.log1p(df_customers[columnas_rfm])
+
+# --- 2. ESTANDARIZACIÓN Z-SCORE (Sobre los datos ya logarítmicos) ---
+
+scaler = StandardScaler()
+columnas_finales = ['recency_final', 'frequency_final', 'monetary_final']
+
+# Estandarizamos los datos comprimidos
+df_customers[columnas_finales] = scaler.fit_transform(df_customers[columnas_log])
+
+# --- 3. VISUALIZAR EL RESULTADO FINAL (Boxplot) ---
+
+# Derretimos el dataframe para graficar
+df_long_final = pd.melt(df_customers[columnas_finales], 
+                        var_name='Métrica', 
+                        value_name='Valor Z (Log+ZScore)')
+
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='Métrica', y='Valor Z (Log+ZScore)', data=df_long_final, palette='Set2')
+plt.axhline(0, color='red', linestyle='--', label='Promedio (0)')
+plt.title('RFM: Transformación Logarítmica + Z-Score', fontsize=14, fontweight='bold')
+plt.legend()
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 15 [CODE]:
+from sklearn.cluster import KMeans
+
+# --- 1. PREPARACIÓN DE LOS DATOS ---
+# Usamos las variables que ya pasaron por Logaritmo y Z-Score
+X_rfm = df_customers[['recency_final', 'frequency_final', 'monetary_final']]
+
+
+# --- 2. EL MÉTODO DEL CODO (Buscando el K óptimo) ---
+inercia = []
+rango_k = range(1, 11) # Probaremos de 1 a 10 clusters
+
+for k in rango_k:
+    # random_state=42 asegura que a todos en tu equipo les dé el mismo resultado
+    kmeans_test = KMeans(n_clusters=k, random_state=42, n_init=10)
+    kmeans_test.fit(X_rfm)
+    inercia.append(kmeans_test.inertia_)
+
+# Graficar el codo
+plt.figure(figsize=(10, 5))
+plt.plot(rango_k, inercia, marker='o', linestyle='--', color='#87CEFA', linewidth=2, markersize=8)
+plt.title('Método del Codo: Optimizando el Modelo RFM', fontsize=14, fontweight='bold')
+plt.xlabel('Número de Segmentos (K)', fontsize=12)
+plt.ylabel('Inercia (Distancia interna de los clusters)', fontsize=12)
+plt.xticks(rango_k)
+plt.axvline(x=4, color='red', linestyle=':', label='Posible Codo (K=4)') # Sugerencia visual
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+# --- 3. ENTRENAMIENTO DEL MODELO K-MEANS ---
+# Basado en la teoría de RFM, 4 clusters suele ser un número ideal (Ej: VIP, Frecuentes, En Riesgo, Perdidos)
+# Si tu gráfico del codo muestra un quiebre más claro en 3 o 5, simplemente cambia este número:
+k_elegido = 3
+
+modelo_rfm = KMeans(n_clusters=k_elegido, random_state=42, n_init=10)
+
+# El algoritmo asigna un número de grupo (0, 1, 2 o 3) a cada cliente
+df_customers['Cluster_RFM'] = modelo_rfm.fit_predict(X_rfm)
+
+
+# --- 4. INTERPRETACIÓN COMERCIAL (El paso para el 7.0) ---
+# Agrupamos a los clientes por su cluster, pero calculamos el promedio de las variables ORIGINALES
+# (Porque decirle al gerente "gastan 2.5 en Z-score" no sirve, necesitamos los dólares reales)
+
+resumen_rfm = df_customers.groupby('Cluster_RFM').agg(
+    Cantidad_Clientes=('customer_id', 'count'),
+    Recencia_Promedio_Dias=('days_since_last_purchase', 'mean'),
+    Frecuencia_Promedio_Ordenes=('total_orders', 'mean'),
+    Gasto_Promedio_USD=('total_spend_usd', 'mean')
+).round(1)
+
+print("\n=== PERFIL DE LOS SEGMENTOS RFM ===")
+display(resumen_rfm)
+----------------------------------------
+Cell 16 [CODE]:
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+
+# --- 1. ENTRENAR K-MEANS CON K=3 ---
+k_elegido = 3
+modelo_rfm = KMeans(n_clusters=k_elegido, random_state=42, n_init=10)
+
+# Asumimos que X_rfm ya tiene ['recency_final', 'frequency_final', 'monetary_final']
+df_customers['Cluster_RFM'] = modelo_rfm.fit_predict(X_rfm)
+
+
+# --- 2. APLICAR PCA (Reducción a 2 Dimensiones) ---
+pca = PCA(n_components=2)
+componentes_principales = pca.fit_transform(X_rfm)
+
+# Creamos un DataFrame temporal solo para el gráfico
+df_pca = pd.DataFrame(data=componentes_principales, columns=['PC1', 'PC2'])
+df_pca['Cluster'] = df_customers['Cluster_RFM'].astype(str) # Lo pasamos a texto para que los colores sean discretos
+
+
+# --- 3. GRAFICAR LOS CLUSTERS ---
+plt.figure(figsize=(10, 8))
+
+# Usamos Seaborn para un gráfico de dispersión elegante
+sns.scatterplot(
+    x='PC1', 
+    y='PC2',
+    hue='Cluster',
+    palette='viridis', # Paleta de colores profesional
+    data=df_pca,
+    alpha=0.7, # Transparencia para ver dónde hay mucha concentración
+    s=60       # Tamaño de los puntos
+)
+
+# Obtenemos cuánta información original (varianza) logró rescatar PCA
+varianza_explicada = pca.explained_variance_ratio_
+
+plt.title('Mapa de Segmentación RFM (PCA 2D) - K=4', fontsize=16, fontweight='bold')
+plt.xlabel(f'Componente Principal 1 ({varianza_explicada[0]*100:.1f}% de la información)', fontsize=12)
+plt.ylabel(f'Componente Principal 2 ({varianza_explicada[1]*100:.1f}% de la información)', fontsize=12)
+
+plt.legend(title='Segmento K-Means', loc='upper right')
+plt.grid(True, linestyle='--', alpha=0.5)
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 17 [CODE]:
+# Instalar plotly si no lo tienen (descomentar la línea de abajo si tira error de que no existe la librería)
+# !pip install plotly
+
+import plotly.express as px
+
+# 1. Preparar la columna de clusters (Plotly necesita que sean texto para tratarlos como categorías separadas)
+# Asumimos que la columna actual se llama 'Cluster_RFM' y tiene números (0, 1, 2)
+df_customers['Cluster_Nombre'] = 'Segmento_' + df_customers['Cluster_RFM'].astype(str)
+
+# 2. Crear el gráfico 3D interactivo
+fig_total_3d = px.scatter_3d(
+    df_customers,
+    x='days_since_last_purchase', # Eje X: Recencia en días reales
+    y='total_orders',             # Eje Y: Frecuencia en órdenes reales
+    z='total_spend_usd',          # Eje Z: Gasto real en dólares
+    color='Cluster_Nombre',       # Colorear según el K-Means
+    title='Espacio Transaccional RFM (Interactivo) - K=3',
+    hover_data=['customer_id', 'country', 'age'], # ¡Muestra estos datos al pasar el mouse!
+    opacity=0.7,
+    # Mapa de colores para mantener consistencia visual
+    color_discrete_map={
+        'Segmento_0': '#3498db', # Azul
+        'Segmento_1': '#e67e22', # Naranja
+        'Segmento_2': '#2ecc71', # Verde Brillante (Si este es el que más gasta, ¡es tu VIP!)
+        'Segmento_3': '#9b59b6'  # (Opcional) Morado por si decides cambiar el modelo a K=4
+    }
+)
+
+# 3. Ajustes de diseño y etiquetas
+fig_total_3d.update_layout(
+    scene = dict(
+        xaxis_title='Recencia (Días inactivo)',
+        yaxis_title='Frecuencia (Total Órdenes)',
+        zaxis_title='Monto (Gasto en USD)'
+    ),
+    margin=dict(r=0, l=0, b=0, t=40),
+    template='plotly_white' # Fondo blanco limpio y profesional
+)
+
+# Mostrar el gráfico interactivo
+fig_total_3d.show()
+----------------------------------------
+Cell 18 [CODE]:
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# --- VISUALIZACIÓN 2D: LAS 3 CARAS DEL MODELO RFM (DATOS ORIGINALES) ---
+
+# Creamos una figura ancha con 3 subgráficos (1 fila, 3 columnas)
+fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+
+# Definimos la misma paleta de colores para mantener consistencia visual con tu gráfico 3D
+paleta_clusters = {
+    'Segmento_0': '#3498db', # Azul
+    'Segmento_1': '#e67e22', # Naranja
+    'Segmento_2': '#2ecc71', # Verde Brillante (VIP)
+    'Segmento_3': '#9b59b6', # Morado (Si decides usar K=4)
+    'Segmento_4': '#393E41'
+}
+
+# 1. Primera cara: Recencia vs Frecuencia
+sns.scatterplot(
+    data=df_customers, 
+    x='days_since_last_purchase', 
+    y='total_orders', 
+    hue='Cluster_Nombre', 
+    palette=paleta_clusters, 
+    alpha=0.6, 
+    ax=axes[0]
+)
+axes[0].set_title('1. Recencia vs Frecuencia', fontsize=14, fontweight='bold')
+axes[0].set_xlabel('Recencia (Días inactivo)', fontsize=11)
+axes[0].set_ylabel('Frecuencia (Total Órdenes)', fontsize=11)
+axes[0].get_legend().remove() # Quitamos la leyenda para que no estorbe (la dejaremos solo en el último)
+
+# 2. Segunda cara: Recencia vs Monto
+sns.scatterplot(
+    data=df_customers, 
+    x='days_since_last_purchase', 
+    y='total_spend_usd', 
+    hue='Cluster_Nombre', 
+    palette=paleta_clusters, 
+    alpha=0.6, 
+    ax=axes[1]
+)
+axes[1].set_title('2. Recencia vs Monto (USD)', fontsize=14, fontweight='bold')
+axes[1].set_xlabel('Recencia (Días inactivo)', fontsize=11)
+axes[1].set_ylabel('Monto (Gasto Total USD)', fontsize=11)
+axes[1].get_legend().remove()
+
+# 3. Tercera cara: Frecuencia vs Monto
+sns.scatterplot(
+    data=df_customers, 
+    x='total_orders', 
+    y='total_spend_usd', 
+    hue='Cluster_Nombre', 
+    palette=paleta_clusters, 
+    alpha=0.6, 
+    ax=axes[2]
+)
+axes[2].set_title('3. Frecuencia vs Monto (USD)', fontsize=14, fontweight='bold')
+axes[2].set_xlabel('Frecuencia (Total Órdenes)', fontsize=11)
+axes[2].set_ylabel('Monto (Gasto Total USD)', fontsize=11)
+axes[2].legend(title='Clusters (K-Means)', bbox_to_anchor=(1.05, 1), loc='upper left') # Leyenda fuera del gráfico
+
+# Título general del panel
+plt.suptitle('Proyecciones 2D del Modelo RFM - Datos Originales', fontsize=18, fontweight='bold', y=1.05)
+
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 19 [CODE]:
+# Gráfico 3D mostrando los datos estandarizados matemáticamente
+fig_total_3d_estandarizado = px.scatter_3d(
+    df_customers,
+    x='recency_final',       # Usando las variables con Log + Z-Score
+    y='frequency_final',     # Usando las variables con Log + Z-Score
+    z='monetary_final',      # Usando las variables con Log + Z-Score
+    color='Cluster_Nombre', 
+    title='Espacio Transaccional RFM (Datos Estandarizados)',
+    hover_data=['customer_id', 'total_spend_usd'], # Mostramos el gasto real al pasar el mouse
+    opacity=0.7
+)
+fig_total_3d_estandarizado.show()
+----------------------------------------
+Cell 20 [MARKDOWN]:
+### 5) Modelo Sociodemográfico con K-means
+----------------------------------------
+Cell 21 [CODE]:
+# --- 1. SELECCIÓN DE VARIABLES LIMPIAS ---
+cols_socio_clean = ['age_group', 'continent', 'gender', 'preferred_device', 'acquisition_channel']
+
+# --- 2. CODIFICACIÓN (One-Hot) ---
+# Usamos estas variables para crear la matriz sin nada de RFM
+df_socio_limpio = pd.get_dummies(df_customers[cols_socio_clean])
+
+# --- 3. CORRER K-MEANS SOBRE ESTA MATRIZ ---
+# Como ahora todo son categorías (0/1), el resultado será mucho más puro
+k_socio = 4 
+modelo_socio_limpio = KMeans(n_clusters=k_socio, random_state=42, n_init=10)
+df_customers['Cluster_Socio_Limpio'] = modelo_socio_limpio.fit_predict(df_socio_limpio)
+
+# --- 4. PERFILAMIENTO ESTRATÉGICO ---
+print("Perfil sociodemográfico puro:")
+display(df_customers.groupby('Cluster_Socio_Limpio')[cols_socio_clean].agg(lambda x: x.mode()[0]))
+----------------------------------------
+Cell 22 [CODE]:
+# --- 1. PREPARACIÓN DE MATRIZ SOCIODEMOGRÁFICA ---
+# Filtramos solo las variables sociodemográficas seleccionadas
+cols_socio = ['age_group', 'continent', 'gender', 'membership_tier', 'preferred_device', 'acquisition_channel']
+
+# Usamos get_dummies para convertir todo a numérico (One-Hot Encoding)
+# Esto es obligatorio para que K-Means pueda "medir" la distancia entre categorías
+df_socio_encoded = pd.get_dummies(df_customers[cols_socio])
+
+# Importante: Estandarizamos los datos binarios (0 y 1)
+# Aunque sean 0/1, es una buena práctica para asegurar que ninguna variable predomine por error
+from sklearn.preprocessing import StandardScaler
+scaler_socio = StandardScaler()
+X_socio = scaler_socio.fit_transform(df_socio_encoded)
+
+# --- 2. MÉTODO DEL CODO (Definiendo el K óptimo) ---
+inercia_socio = []
+rango_k = range(1, 11)
+
+for k in rango_k:
+    kmeans_socio = KMeans(n_clusters=k, random_state=42, n_init=10)
+    kmeans_socio.fit(X_socio)
+    inercia_socio.append(kmeans_socio.inertia_)
+
+plt.figure(figsize=(10, 5))
+plt.plot(rango_k, inercia_socio, marker='o', color='#DDA0DD', linestyle='--')
+plt.title('Método del Codo: Modelo Sociodemográfico', fontsize=14, fontweight='bold')
+plt.xlabel('Número de Clusters (K)')
+plt.ylabel('Inercia')
+plt.show()
+----------------------------------------
+Cell 23 [CODE]:
+# --- 3. ENTRENAMIENTO Y PERFILAMIENTO ---
+k_socio = 4 # <--- AJUSTA SEGÚN TU GRÁFICO DEL CODO
+modelo_socio = KMeans(n_clusters=k_socio, random_state=42, n_init=10)
+df_customers['Cluster_Socio'] = modelo_socio.fit_predict(X_socio)
+
+# --- 4. EXPORTAR PERFILES PARA TU INFORME ---
+# Esto te dará una tabla con los grupos y sus características principales
+perfil_socio = df_customers.groupby('Cluster_Socio')[cols_socio].agg(lambda x: x.mode()[0])
+perfil_socio['Cantidad_Clientes'] = df_customers.groupby('Cluster_Socio').size()
+
+print("\n=== PERFIL DE LOS SEGMENTOS SOCIODEMOGRÁFICOS ===")
+display(perfil_socio)
+----------------------------------------
+Cell 24 [CODE]:
+from sklearn.decomposition import PCA
+
+# --- 1. PCA PARA MODELO SOCIODEMOGRÁFICO ---
+# Usamos X_socio (la matriz que escalamos antes con StandardScaler)
+pca_socio = PCA(n_components=2)
+componentes_socio = pca_socio.fit_transform(X_socio)
+
+# Crear DataFrame para el gráfico
+df_pca_socio = pd.DataFrame(data=componentes_socio, columns=['PC1', 'PC2'])
+df_pca_socio['Cluster'] = df_customers['Cluster_Socio'].astype(str)
+
+# --- 2. GRAFICAR ---
+plt.figure(figsize=(10, 8))
+sns.scatterplot(
+    x='PC1', 
+    y='PC2',
+    hue='Cluster',
+    palette='magma', # Usamos una paleta distinta para diferenciarlo del RFM
+    data=df_pca_socio,
+    alpha=0.6,
+    s=70
+)
+
+# Cálculo de varianza explicada para tu informe técnico
+varianza_socio = pca_socio.explained_variance_ratio_
+
+plt.title('Mapa de Segmentación Sociodemográfica (PCA 2D)', fontsize=16, fontweight='bold')
+plt.xlabel(f'Componente Principal 1 ({varianza_socio[0]*100:.1f}%)', fontsize=12)
+plt.ylabel(f'Componente Principal 2 ({varianza_socio[1]*100:.1f}%)', fontsize=12)
+plt.legend(title='Segmento Sociodemográfico')
+plt.grid(True, linestyle='--', alpha=0.3)
+plt.show()
+----------------------------------------
+Cell 25 [CODE]:
+import pandas as pd
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+# --- 1. SELECCIÓN Y CONFIGURACIÓN DE VARIABLES ---
+# Variables con orden jerárquico (Usaremos Label Encoding)
+cols_ordinales = ['membership_tier'] 
+
+# Variables sin orden (Usaremos One-Hot Encoding)
+cols_nominales = ['country', 'gender', 'preferred_device', 'acquisition_channel']
+
+# --- 2. APLICAR TRANSFORMACIONES ---
+df_socio_final = df_customers.copy()
+
+# A. Label Encoding (para las ordinales)
+le = LabelEncoder()
+# Mapeo manual para asegurar que Free < Silver < Gold < Platinum (Ajusta según tus valores únicos)
+# Si te da error, imprime df_customers['membership_tier'].unique() para ver los nombres exactos
+mapping_membership = {'Free': 0, 'Silver': 1, 'Gold': 2, 'Platinum': 3}
+df_socio_final['membership_tier_encoded'] = df_socio_final['membership_tier'].map(mapping_membership)
+
+# B. One-Hot Encoding (para las nominales)
+df_socio_final = pd.get_dummies(df_socio_final, columns=cols_nominales)
+
+# --- 3. PREPARACIÓN DE LA MATRIZ FINAL ---
+# Seleccionamos las columnas que usaremos para el K-Means
+# Incluimos la numérica 'age' y las codificadas
+cols_modelo = ['age', 'membership_tier_encoded'] + [c for c in df_socio_final.columns if any(x in c for x in cols_nominales)]
+X_socio_final = df_socio_final[cols_modelo]
+
+# Estandarización obligatoria para K-Means
+scaler = StandardScaler()
+X_socio_scaled = scaler.fit_transform(X_socio_final)
+
+# --- 4. ENTRENAMIENTO K-MEANS ---
+# Aquí puedes poner el K que hayas visto en el codo (ej. K=4)
+k_final = 6
+kmeans_socio_final = KMeans(n_clusters=k_final, random_state=42, n_init=10)
+df_customers['Cluster_Socio_Final'] = kmeans_socio_final.fit_predict(X_socio_scaled)
+
+# --- 5. PERFILAMIENTO ESTRATÉGICO ---
+# Vemos los promedios por cluster para caracterizar
+perfil_final = df_customers.groupby('Cluster_Socio_Final')[['age', 'membership_tier', 'country', 'preferred_device', 'acquisition_channel']].agg(lambda x: x.mode()[0])
+perfil_final['Cantidad_Clientes'] = df_customers.groupby('Cluster_Socio_Final').size()
+
+print("\n=== PERFIL DE LOS SEGMENTOS SOCIODEMOGRÁFICOS (MODELO HÍBRIDO) ===")
+display(perfil_final)
+----------------------------------------
+Cell 28 [CODE]:
+# Multiplicamos la edad y membresía por 2 o 3 para que pesen más que el resto
+X_socio_final['age'] = X_socio_final['age'] * 3
+X_socio_final['membership_tier_encoded'] = X_socio_final['membership_tier_encoded'] * 3
+
+# Ahora sí, escalamos y corremos K-Means de nuevo
+X_socio_scaled = scaler.fit_transform(X_socio_final)
+kmeans_socio_final = KMeans(n_clusters=4, random_state=42, n_init=10)
+df_customers['Cluster_Socio_Final'] = kmeans_socio_final.fit_predict(X_socio_scaled)
+----------------------------------------
+Cell 31 [CODE]:
+from stepmix import StepMix
+import numpy as np
+
+# 1. Asegúrate de que X_lca sea una matriz numérica (LabelEncoding previo aplicado)
+# y que no tenga nulos.
+X_lca = np.array(X_lca)
+
+# 2. DEFINICIÓN EXPLÍCITA DEL DESCRIPTOR
+# En lugar de pasar una lista, pasamos un diccionario si queremos ser ultra específicos,
+# o un string si queremos aplicar el mismo modelo a todas. 
+# Para tu caso (mixto: categóricas + continua), usaremos la forma "dict" que es la más robusta:
+measurement = {
+    'categorical': list(range(len(cat_cols))), # Índices de tus columnas categóricas
+    'gaussian': [len(cat_cols)]                # Índice de tu columna continua (la edad)
+}
+
+# 3. Inicializar el modelo
+model = StepMix(
+    n_components=4, 
+    measurement=measurement, 
+    random_state=42, 
+    n_init=5
+)
+
+# 4. Ajustar
+model.fit(X_lca)
+df_customers['Cluster_LCA'] = model.predict(X_lca)
+
+print("¡Modelo LCA ajustado exitosamente!")
+----------------------------------------
+
+====================================
+INSPECTING: lca_demografico_v2.ipynb
+====================================
+Cell 0 [MARKDOWN]:
+# Segmentación Sociodemográfica con LCA
+**Latent Class Analysis (Análisis de Clases Latentes)**
+
+A diferencia de K-Means, LCA es un modelo probabilístico basado en variables **categóricas**. Asume que existe una variable latente (no observable) que explica los patrones de respuesta observados. Cada 
+----------------------------------------
+Cell 2 [CODE]:
+# !pip install stepmix scikit-learn pandas numpy matplotlib seaborn
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+
+from sklearn.preprocessing import LabelEncoder
+from sklearn.decomposition import PCA
+from sklearn.metrics import adjusted_rand_score
+from stepmix.stepmix import StepMix
+
+%matplotlib inline
+PALETTE = ['#2E86AB', '#F18F01', '#C73E1D', '#44BBA4', '#A23B72', '#393E41']
+sns.set_theme(style='whitegrid')
+plt.rcParams['figure.dpi'] = 120
+RANDOM_STATE = 42
+print('Librerías cargadas ✓')
+----------------------------------------
+Cell 6 [CODE]:
+# ── Variables categóricas (multinomial) ───────────────────────────────────────
+CAT_COLS = [
+    'gender', 'age_group', 'region', 'membership_tier',
+    'preferred_device',
+    'acquisition_channel', 'preferred_category',
+]
+
+# LabelEncoder POR COLUMNA: cada variable conserva su propio espacio de categorías
+encoders    = {}
+cat_mapping = {}
+X_parts     = []
+
+for col in CAT_COLS:
+    le = LabelEncoder()
+    encoded = le.fit_transform(cust_active[col])
+    encoders[col]    = le
+    cat_mapping[col] = list(le.classes_)
+    X_parts.append(encoded.reshape(-1, 1))
+
+
+# Matriz final: cada columna corresponde a una variable
+X_lca = np.hstack(X_parts).astype(float)
+
+# ── Descriptor de medición explícito (dict-of-dicts) ─────────────────────────
+# FIX: en lugar de measurement='categorical' (string homogéneo),
+# se declara cada variable con su propio modelo y columna.
+# StepMix infiere n_categories de los datos por columna → probabilidades correctas.
+MEASUREMENT = {
+    col: {'model': 'categorical', 'n_columns': 1}
+    for col in CAT_COLS
+}
+
+print(f'Matriz LCA: {X_lca.shape[0]:,} obs × {X_lca.shape[1]} variables')
+print('\nCategorías por variable:')
+for col, cats in cat_mapping.items():
+    print(f'  {col:35s} ({len(cats)} cats): {cats}')
+----------------------------------------
+Cell 7 [MARKDOWN]:
+## 3. Selección del número óptimo de clases
+
+| Criterio | Fórmula | Interpretación |
+|---|---|---|
+| **BIC** | $-2\ln(\hat{L}) + k\ln(n)$ | Penaliza más la complejidad; más conservador |
+| **AIC** | $-2\ln(\hat{L}) + 2k$ | Penaliza menos; favorece modelos más ricos |
+| **Entropía** | $1 - \frac{\sum
+----------------------------------------
+Cell 8 [CODE]:
+# ── Barrido k = 2..6 ─────────────────────────────────────────────────────────
+# n_init=5, max_iter=300: necesario para que el EM converja con variables heterogéneas
+# Con n_init muy bajo (<=3) el modelo puede quedar atrapado en óptimos locales
+# y producir clases idénticas entre sí.
+
+K_RANGE    = range(2, 5)
+resultados = []
+
+for k in K_RANGE:
+    model_k = StepMix(
+        n_components = k,
+        measurement  = MEASUREMENT,   # FIX: descriptor explícito
+        random_state = RANDOM_STATE,
+        n_init       = 8,             # FIX: mínimo 5 para estabilidad
+        max_iter     = 300,           # FIX: suficiente para convergencia
+        verbose      = 0,
+        progress_bar = 0
+    )
+    model_k.fit(X_lca)
+    labels_k = model_k.predict(X_lca)
+    probs_k  = model_k.predict_proba(X_lca)
+
+    # Entropía normalizada (Ramaswamy 1993)
+    eps         = 1e-12
+    entropy_raw = -np.sum(probs_k * np.log(probs_k + eps))
+    ent_norm    = 1 - (entropy_raw / (len(X_lca) * np.log(k)))
+
+    sizes         = np.bincount(labels_k)
+    min_class_pct = sizes.min() / len(labels_k) * 100
+
+    resultados.append({
+        'k'          : k,
+        'BIC'        : model_k.bic(X_lca),
+        'AIC'        : model_k.aic(X_lca),
+        'LogLik'     : model_k.score(X_lca) * len(X_lca),
+        'Entropía'   : round(ent_norm, 4),
+        'Clase_min_%': round(min_class_pct, 1),
+    })
+    print(f"k={k} | BIC={resultados[-1]['BIC']:,.1f} | AIC={resultados[-1]['AIC']:,.1f} "
+          f"| Entropía={ent_norm:.4f} | Clase_min={min_class_pct:.1f}%")
+
+df_sel = pd.DataFrame(resultados)
+print('\nTabla completa:')
+display(df_sel.round(2))
+----------------------------------------
+Cell 9 [CODE]:
+# ── Gráfico de selección ──────────────────────────────────────────────────────
+fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+
+axes[0].plot(df_sel['k'], df_sel['BIC'], 'o-', color=PALETTE[0],
+             linewidth=2, markersize=7, label='BIC')
+axes[0].plot(df_sel['k'], df_sel['AIC'], 's--', color=PALETTE[1],
+             linewidth=2, markersize=7, label='AIC')
+axes[0].set_title('BIC y AIC\n(↓ mejor)', fontweight='bold')
+axes[0].set_xlabel('Número de clases (k)')
+axes[0].set_ylabel('Criterio de información')
+axes[0].legend()
+axes[0].grid(True, alpha=0.4)
+
+axes[1].plot(df_sel['k'], df_sel['Entropía'], 'D-', color=PALETTE[2],
+             linewidth=2, markersize=7)
+axes[1].axhline(0.6, color='gray', linestyle=':', linewidth=1.2,
+                label='Umbral aceptable (0.60)')
+axes[1].set_title('Entropía Normalizada\n(↑ mejor, clases más nítidas)', fontweight='bold')
+axes[1].set_xlabel('k')
+axes[1].set_ylabel('Entropía normalizada')
+axes[1].set_ylim(0, 1)
+axes[1].legend(fontsize=9)
+axes[1].grid(True, alpha=0.4)
+
+axes[2].bar(df_sel['k'], df_sel['Clase_min_%'], color=PALETTE[3], alpha=0.8)
+axes[2].axhline(5, color='red', linestyle='--', linewidth=1.2,
+                label='Mínimo recomendado (5%)')
+axes[2].set_title('Tamaño de la Clase más Pequeña\n(> 5% = aceptable)', fontweight='bold')
+axes[2].set_xlabel('k')
+axes[2].set_ylabel('% del total')
+axes[2].legend(fontsize=9)
+axes[2].grid(True, alpha=0.4)
+
+fig.suptitle('Selección del Número Óptimo de Clases – LCA Sociodemográfico',
+             fontsize=13, fontweight='bold', y=1.02)
+plt.tight_layout()
+plt.show()
+
+k_bic = int(df_sel.loc[df_sel['BIC'].idxmin(), 'k'])
+k_aic = int(df_sel.loc[df_sel['AIC'].idxmin(), 'k'])
+print(f'\n→ BIC mínimo en k = {k_bic}')
+print(f'→ AIC mínimo en k = {k_aic}')
+print('\nNota: si BIC y AIC difieren, el BIC es el criterio preferido en LCA porque')
+print('penaliza más la complejidad y evita sobre-segmentación.')
+----------------------------------------
+Cell 10 [MARKDOWN]:
+## 4. Modelo LCA final
+
+> **Decisión sobre k:** el BIC mínimo indica el número de clases estadísticamente óptimo.
+> Si ese valor tiene baja interpretabilidad de negocio, se puede elegir un k mayor siempre que:
+> - La diferencia de BIC sea pequeña (< 10 puntos por clase adicional)
+> - La entropía sea
+----------------------------------------
+Cell 11 [CODE]:
+# ── Ajustar modelo final ──────────────────────────────────────────────────────
+K_FINAL = 3   # <── cambia este valor (recomendado: valor con BIC mínimo o BIC+1)
+
+lca_final = StepMix(
+    n_components = K_FINAL,
+    measurement  = MEASUREMENT,   # FIX: descriptor explícito
+    random_state = RANDOM_STATE,
+    n_init       = 10,            # FIX: más reinicializaciones para convergencia robusta
+    max_iter     = 500,           # FIX: suficiente para datos con 9 variables
+    verbose      = 0,
+    progress_bar = 0
+)
+lca_final.fit(X_lca)
+
+# Asignación modal (clase con mayor probabilidad)
+cust_active['clase_lca']     = lca_final.predict(X_lca)
+cust_active['prob_max_clase'] = lca_final.predict_proba(X_lca).max(axis=1)
+probs_membresia              = lca_final.predict_proba(X_lca)
+
+# Métricas finales
+bic_f   = lca_final.bic(X_lca)
+aic_f   = lca_final.aic(X_lca)
+eps     = 1e-12
+ent_raw = -np.sum(probs_membresia * np.log(probs_membresia + eps))
+ent_rel = 1 - (ent_raw / (len(X_lca) * np.log(K_FINAL)))
+avg_prob = cust_active['prob_max_clase'].mean()
+
+print(f'Modelo LCA final: k = {K_FINAL}')
+print(f'  BIC              : {bic_f:,.2f}')
+print(f'  AIC              : {aic_f:,.2f}')
+print(f'  Entropía norm.   : {ent_rel:.4f}  (1.0 = clases perfectamente separadas)')
+print(f'  Prob. media      : {avg_prob:.4f}  (1.0 = asignación perfectamente segura)')
+print(f'\nTamaño de clases:')
+counts = cust_active['clase_lca'].value_counts().sort_index()
+for c, n in counts.items():
+    print(f'  Clase {c}: {n:,} ({n/len(cust_active)*100:.1f}%)')
+----------------------------------------
+Cell 12 [MARKDOWN]:
+## 5. Probabilidades condicionales (el "ADN" de cada clase)
+
+La salida central de LCA son las **probabilidades condicionales**: dado que un individuo
+pertenece a la clase *c*, ¿cuál es la probabilidad de que tenga la categoría *j* en la variable *v*?
+
+**FIX:** Se calculan empíricamente desde los dat
+----------------------------------------
+Cell 14 [CODE]:
+# ── Heatmaps de probabilidades condicionales por variable ─────────────────────
+n_vars   = len(ALL_VARS)
+n_cols_g = 3
+n_rows_g = int(np.ceil(n_vars / n_cols_g))
+fig, axes = plt.subplots(n_rows_g, n_cols_g, figsize=(18, n_rows_g * 4))
+axes_flat = axes.flatten()
+
+for i, col in enumerate(ALL_VARS):
+    sub   = df_cond[df_cond['variable'] == col]
+    pivot = sub.pivot(index='categoría', columns='clase', values='P(cat|clase)')
+    pivot.columns = [f'Clase {c}' for c in pivot.columns]
+
+    sns.heatmap(
+        pivot, annot=True, fmt='.2f', cmap='Blues',
+        vmin=0, vmax=1, linewidths=0.5,
+        ax=axes_flat[i], cbar=False,
+        annot_kws={'size': 8}
+    )
+    axes_flat[i].set_title(col, fontweight='bold', fontsize=10)
+    axes_flat[i].set_xlabel('')
+    axes_flat[i].set_ylabel('')
+    axes_flat[i].tick_params(axis='y', labelsize=8)
+
+for j in range(n_vars, len(axes_flat)):
+    axes_flat[j].set_visible(False)
+
+fig.suptitle(
+    'Probabilidades Condicionales P(categoría | clase) – LCA Sociodemográfico\n'
+    '(valores más altos = característica definitoria de la clase)',
+    fontsize=13, fontweight='bold', y=1.01
+)
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 19 [CODE]:
+# ── Distribución de probabilidades de membresía (certeza de asignación) ───────
+fig, axes = plt.subplots(1, K_FINAL, figsize=(5 * K_FINAL, 4))
+if K_FINAL == 1:
+    axes = [axes]
+
+for c, ax in enumerate(axes):
+    mask = cust_active['clase_lca'] == c
+    ax.hist(probs_membresia[mask, c], bins=30,
+            color=PALETTE[c % len(PALETTE)], edgecolor='white', alpha=0.85)
+    ax.axvline(probs_membresia[mask, c].mean(), color='black',
+               linestyle='--', linewidth=1.5,
+               label=f'Media = {probs_membresia[mask, c].mean():.2f}')
+    ax.set_title(CLASS_NAMES[c], fontweight='bold')
+    ax.set_xlabel('P(pertenecer a esta clase)')
+    ax.set_ylabel('Frecuencia')
+    ax.set_xlim(0, 1)
+    ax.legend(fontsize=9)
+
+fig.suptitle('Distribución de Probabilidades de Membresía por Clase\n'
+             '(→ 1.0 = asignación muy segura; → 0.5 = individuo en zona de frontera)',
+             fontsize=12, fontweight='bold', y=1.02)
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 20 [CODE]:
+# ── Heatmap de perfil numérico normalizado ─────────────────────────────────────
+vars_heat = ['edad_media','gasto_total_medio','ordenes_medio',
+             'dias_ult_compra','review_medio','wishlist_medio']
+
+heat_data  = perfil_num[vars_heat].copy()
+heat_data.index = [CLASS_NAMES[i] for i in heat_data.index]
+heat_norm  = (heat_data - heat_data.min()) / (heat_data.max() - heat_data.min()).replace(0, 1)
+
+labels_display = ['Edad media','Gasto total','Órdenes','Días ult. compra',
+                  'Review medio','Wishlist']
+
+fig, ax = plt.subplots(figsize=(12, max(3, K_FINAL + 1)))
+sns.heatmap(
+    heat_norm.T,
+    annot=heat_data.T.round(1), fmt='g',
+    cmap='RdYlGn', linewidths=0.5, ax=ax,
+    yticklabels=labels_display,
+    cbar_kws={'label': 'Valor normalizado [0,1]'}
+)
+ax.set_title('Perfil de Clases LCA – Variables Numéricas (valores reales anotados)',
+             fontweight='bold', pad=12)
+ax.set_xlabel('Clase')
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 21 [CODE]:
+# ── Distribución de variables categóricas clave por clase ─────────────────────
+vars_barras = [
+    ('membership_tier',          'Nivel de Membresía'),
+    ('preferred_device',         'Dispositivo Preferido'),
+    ('acquisition_channel',      'Canal de Adquisición'),
+    ('gender',                   'Género'),
+    ('region',                   'Región'),
+    ('preferred_category',       'Categoría Preferida'),
+]
+
+fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+axes_flat = axes.flatten()
+
+for ax, (col, titulo) in zip(axes_flat, vars_barras):
+    ct = pd.crosstab(
+        cust_active['clase_nombre'],
+        cust_active[col],
+        normalize='index'
+    ) * 100
+    ct.plot(kind='bar', ax=ax, color=PALETTE[:ct.shape[1]],
+            edgecolor='white', width=0.7)
+    ax.set_title(titulo, fontweight='bold', fontsize=11)
+    ax.set_xlabel('')
+    ax.set_ylabel('% dentro de la clase')
+    ax.tick_params(axis='x', rotation=15)
+    ax.legend(title='', fontsize=8, bbox_to_anchor=(1, 1))
+    ax.grid(axis='y', alpha=0.3)
+
+fig.suptitle('Distribución de Variables Sociodemográficas por Clase LCA',
+             fontsize=13, fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 22 [CODE]:
+# ── PCA 2D para visualizar separación de clases ───────────────────────────────
+pca  = PCA(n_components=2, random_state=RANDOM_STATE)
+X_2d = pca.fit_transform(X_lca)
+
+fig, ax = plt.subplots(figsize=(9, 6))
+for c in sorted(cust_active['clase_lca'].unique()):
+    mask = cust_active['clase_lca'] == c
+    ax.scatter(
+        X_2d[mask, 0], X_2d[mask, 1],
+        s=14, alpha=0.45,
+        color=PALETTE[c % len(PALETTE)],
+        label=CLASS_NAMES[c]
+    )
+
+ax.set_title(f'Separación de Clases LCA en espacio PCA 2D (k={K_FINAL})',
+             fontweight='bold')
+ax.set_xlabel(f'PC1 ({pca.explained_variance_ratio_[0]*100:.1f}% var.)')
+ax.set_ylabel(f'PC2 ({pca.explained_variance_ratio_[1]*100:.1f}% var.)')
+ax.legend(markerscale=3, title='Clase')
+ax.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+print(f'Varianza explicada por 2 PCs: {pca.explained_variance_ratio_.sum()*100:.1f}%')
+print('Nota: PCA es solo para visualización; LCA opera en el espacio original.')
+----------------------------------------
+Cell 23 [MARKDOWN]:
+## 8. Comparación: LCA vs K-Means
+----------------------------------------
+Cell 24 [CODE]:
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
+
+# ── K-Means con el mismo número de grupos que el LCA final ────────────────────
+num_cols_km = ['age', 'total_spend_usd', 'total_orders',
+               'days_since_last_purchase', 'avg_review_score', 'wishlist_items']
+
+cat_cols_km = ['gender', 'preferred_device',
+               'acquisition_channel', 'membership_tier']
+oh_km    = pd.get_dummies(cust_active[cat_cols_km])
+X_km_raw = pd.concat([cust_active[num_cols_km].reset_index(drop=True),
+                       oh_km.reset_index(drop=True)], axis=1)
+X_km     = StandardScaler().fit_transform(X_km_raw)
+
+km_final  = KMeans(n_clusters=K_FINAL, init='k-means++',
+                   n_init=10, random_state=RANDOM_STATE)
+labels_km = km_final.fit_predict(X_km)
+
+# ── Métricas de calidad de clustering ─────────────────────────────────────────
+sil_km = silhouette_score(X_km, labels_km, sample_size=2000, random_state=RANDOM_STATE)
+db_km  = davies_bouldin_score(X_km, labels_km)
+ch_km  = calinski_harabasz_score(X_km, labels_km)
+
+sil_lca = silhouette_score(X_lca, cust_active['clase_lca'].values,
+                            sample_size=2000, random_state=RANDOM_STATE)
+db_lca  = davies_bouldin_score(X_lca, cust_active['clase_lca'].values)
+ch_lca  = calinski_harabasz_score(X_lca, cust_active['clase_lca'].values)
+
+ari = adjusted_rand_score(labels_km, cust_active['clase_lca'].values)
+
+comparacion = pd.DataFrame({
+    'Modelo'         : ['K-Means', 'LCA'],
+    'k'              : [K_FINAL, K_FINAL],
+    'Silhouette ↑'   : [sil_km, sil_lca],
+    'Davies-Bouldin ↓': [db_km, db_lca],
+    'Calinski-H ↑'   : [ch_km, ch_lca],
+    'Entropía ↑'     : ['N/A (no aplica)', f'{ent_rel:.4f}'],
+    'BIC'            : ['N/A', f'{bic_f:,.1f}'],
+}).set_index('Modelo')
+
+print('=== Comparación K-Means vs LCA ===')
+display(comparacion)
+print(f'\nAdjusted Rand Index (acuerdo entre soluciones): {ari:.4f}')
+print('  ARI = 0 → asignaciones aleatorias  |  ARI = 1 → mismo agrupamiento')
+print('\nNota interpretativa:')
+print('  K-Means optimiza distancias euclidianas → métricas como Silhouette lo favorecerán.')
+print('  LCA optimiza verosimilitud sobre variables categóricas → BIC y Entropía son sus métricas propias.')
+print('  Ambos modelos son complementarios, no directamente comparables con las mismas métricas.')
+----------------------------------------
+Cell 25 [CODE]:
+# ── Crosstab: acuerdo entre las dos soluciones ────────────────────────────────
+cust_active['clase_kmeans'] = labels_km
+
+cross = pd.crosstab(
+    cust_active['clase_nombre'],
+    cust_active['clase_kmeans'],
+    rownames=['LCA'],
+    colnames=['K-Means'],
+    normalize='index'
+).round(3) * 100
+cross.columns = [f'KM_{c}' for c in cross.columns]
+
+fig, ax = plt.subplots(figsize=(8, max(3, K_FINAL + 1)))
+sns.heatmap(cross, annot=True, fmt='.1f', cmap='Blues',
+            linewidths=0.5, ax=ax,
+            cbar_kws={'label': '% de la clase LCA que cae en cada cluster K-Means'})
+ax.set_title('Correspondencia entre clases LCA y clusters K-Means\n'
+             '(filas=LCA, columnas=K-Means, valores=% de la fila)',
+             fontweight='bold')
+plt.tight_layout()
+plt.show()
+----------------------------------------
+Cell 28 [CODE]:
+# ── Gráfico de burbujas: tamaño × gasto × edad ────────────────────────────────
+fig, ax = plt.subplots(figsize=(9, 6))
+
+for i, (nombre, row) in enumerate(resumen.iterrows()):
+    ax.scatter(
+        row['edad_media'], row['gasto_medio'],
+        s=row['n_clientes'] * 0.04,
+        color=PALETTE[i % len(PALETTE)],
+        alpha=0.75, edgecolor='white', linewidth=1.5
+    )
+    ax.annotate(
+        f"{nombre}\n(n={row['n_clientes']:,})",
+        (row['edad_media'], row['gasto_medio']),
+        textcoords='offset points', xytext=(10, 6),
+        fontsize=10, fontweight='bold'
+    )
+
+ax.set_xlabel('Edad Media', fontsize=11)
+ax.set_ylabel('Gasto Total Medio (USD)', fontsize=11)
+ax.set_title('Mapa de Clases LCA\n(tamaño de burbuja = número de clientes)',
+             fontweight='bold')
+ax.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+----------------------------------------
