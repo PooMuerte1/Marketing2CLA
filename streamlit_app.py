@@ -20,22 +20,15 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Outfit:wght@400;600;700;800&display=swap');
     
-    html, body, [class*="css"], [data-testid="stAppViewContainer"] {
+    html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
-        background-color: #0B0F19 !important;
-        color: #F8FAFC !important;
-    }
-    
-    .stApp {
-        background-color: #0B0F19 !important;
-        color: #F8FAFC !important;
     }
     
     .main-title {
         font-family: 'Outfit', sans-serif;
         font-size: 2.8rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #F8FAFC 0%, #64748B 100%);
+        background: linear-gradient(135deg, #1E3C72 0%, #2A5298 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.5rem;
@@ -43,7 +36,7 @@ st.markdown("""
     
     .subtitle {
         font-size: 1.2rem;
-        color: #94A3B8;
+        color: #5A6A85;
         margin-bottom: 2rem;
         font-weight: 300;
     }
@@ -52,11 +45,10 @@ st.markdown("""
         font-family: 'Outfit', sans-serif;
         font-size: 1.8rem;
         font-weight: 700;
-        border-bottom: 3px solid #0EA5E9;
+        border-bottom: 3px solid #3B82F6;
         padding-bottom: 0.5rem;
         margin-top: 1.5rem;
         margin-bottom: 1rem;
-        color: #F8FAFC;
     }
     
     .card {
@@ -64,7 +56,7 @@ st.markdown("""
         color: #F1F5F9 !important;
         padding: 1.5rem;
         border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         border: 1px solid #334155 !important;
         margin-bottom: 1rem;
     }
@@ -75,7 +67,7 @@ st.markdown("""
     .metric-title {
         font-size: 0.85rem;
         text-transform: uppercase;
-        color: #94A3B8;
+        color: #64748B;
         font-weight: 600;
         letter-spacing: 0.05em;
     }
@@ -83,12 +75,11 @@ st.markdown("""
     .metric-value {
         font-size: 1.8rem;
         font-weight: 700;
-        color: #0EA5E9;
     }
     
     .badge-info {
-        background-color: #334155;
-        color: #F1F5F9;
+        background-color: #E2E8F0;
+        color: #334155;
         padding: 0.25rem 0.5rem;
         border-radius: 6px;
         font-size: 0.8rem;
@@ -96,34 +87,16 @@ st.markdown("""
     }
     
     .pitch-guide {
-        background-color: #1E293B;
+        background-color: #FFF9E6;
         border-left: 5px solid #F59E0B;
         padding: 1.2rem 1.5rem;
         border-radius: 8px;
         margin-bottom: 1.5rem;
-        color: #FBBF24 !important;
-        border: 1px solid #334155;
+        color: #78350F !important;
     }
     .pitch-guide strong {
-        color: #FBBF24 !important;
+        color: #92400E !important;
     }
-    
-    /* Sleek Industrial Tabs Style */
-    button[data-baseweb="tab"] {
-        color: #94A3B8 !important;
-        background-color: #111827 !important;
-        border-radius: 8px 8px 0 0 !important;
-        border: 1px solid #1F2937 !important;
-        margin-right: 4px !important;
-        padding: 10px 20px !important;
-    }
-    button[data-baseweb="tab"][aria-selected="true"] {
-        color: #FFFFFF !important;
-        background-color: #1F2937 !important;
-        border-bottom: 3px solid #0EA5E9 !important;
-        font-weight: 700 !important;
-    }
-    
     /* Hide Streamlit Sidebar completely */
     [data-testid="stSidebar"] {
         display: none !important;
@@ -314,7 +287,7 @@ with tab2:
         fig_pca_rfm_app.update_layout(
             xaxis_title=f'Componente Principal 1 ({EV_RFM_1*100:.1f}%)',
             yaxis_title=f'Componente Principal 2 ({EV_RFM_2*100:.1f}%)',
-            template='plotly_dark',
+            template='plotly_white',
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8)),
             height=400
         )
@@ -350,7 +323,7 @@ with tab2:
             ),
             margin=dict(r=0, l=0, b=0, t=10),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8)),
-            template='plotly_dark',
+            template='plotly_white',
             height=400
         )
         st.plotly_chart(fig_3d_rfm, use_container_width=True)
@@ -369,13 +342,13 @@ with tab2:
         
         fig_rec = px.bar(
             dist_rec_long, x="Cluster_RFM_Nombre", y="Proporción", color="recency_cat",
-            barmode="stack", color_discrete_sequence=['#38BDF8', '#818CF8', '#FB7185', '#34D399', '#FBBF24', '#A78BFA', '#F472B6'], height=250
+            barmode="stack", color_discrete_sequence=px.colors.qualitative.Pastel, height=250
         )
         fig_rec.update_layout(
             margin=dict(l=10, r=10, t=10, b=10), xaxis=dict(title='', showticklabels=False),
             yaxis=dict(tickformat='.0%', title=''),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8)),
-            template='plotly_dark'
+            template='plotly_white'
         )
         st.plotly_chart(fig_rec, use_container_width=True)
         
@@ -387,13 +360,13 @@ with tab2:
         
         fig_freq = px.bar(
             dist_freq_long, x="Cluster_RFM_Nombre", y="Proporción", color="frequency_cat",
-            barmode="stack", color_discrete_sequence=['#38BDF8', '#818CF8', '#FB7185', '#34D399', '#FBBF24', '#A78BFA', '#F472B6'], height=250
+            barmode="stack", color_discrete_sequence=px.colors.qualitative.Pastel, height=250
         )
         fig_freq.update_layout(
             margin=dict(l=10, r=10, t=10, b=10), xaxis=dict(title='', showticklabels=False),
             yaxis=dict(tickformat='.0%', title=''),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8)),
-            template='plotly_dark'
+            template='plotly_white'
         )
         st.plotly_chart(fig_freq, use_container_width=True)
         
@@ -405,13 +378,13 @@ with tab2:
         
         fig_mon = px.bar(
             dist_mon_long, x="Cluster_RFM_Nombre", y="Proporción", color="monetary_cat",
-            barmode="stack", color_discrete_sequence=['#38BDF8', '#818CF8', '#FB7185', '#34D399', '#FBBF24', '#A78BFA', '#F472B6'], height=250
+            barmode="stack", color_discrete_sequence=px.colors.qualitative.Pastel, height=250
         )
         fig_mon.update_layout(
             margin=dict(l=10, r=10, t=10, b=10), xaxis=dict(title='', showticklabels=False),
             yaxis=dict(tickformat='.0%', title=''),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8)),
-            template='plotly_dark'
+            template='plotly_white'
         )
         st.plotly_chart(fig_mon, use_container_width=True)
 
@@ -450,7 +423,7 @@ with tab2:
             title=f'Cara 1: {x_title_1} vs {y_title_1}', hover_data=['customer_id'],
             opacity=0.7, color_discrete_sequence=px.colors.qualitative.Bold
         )
-        fig_face1.update_layout(xaxis_title=x_title_1, yaxis_title=y_title_1, template='plotly_dark')
+        fig_face1.update_layout(xaxis_title=x_title_1, yaxis_title=y_title_1, template='plotly_white')
         st.plotly_chart(fig_face1, use_container_width=True)
         
     with sub_tab2:
@@ -459,7 +432,7 @@ with tab2:
             title=f'Cara 2: {x_title_2} vs {y_title_2}', hover_data=['customer_id'],
             opacity=0.7, color_discrete_sequence=px.colors.qualitative.Bold
         )
-        fig_face2.update_layout(xaxis_title=x_title_2, yaxis_title=y_title_2, template='plotly_dark')
+        fig_face2.update_layout(xaxis_title=x_title_2, yaxis_title=y_title_2, template='plotly_white')
         st.plotly_chart(fig_face2, use_container_width=True)
         
     with sub_tab3:
@@ -468,7 +441,7 @@ with tab2:
             title=f'Cara 3: {x_title_3} vs {y_title_3}', hover_data=['customer_id'],
             opacity=0.7, color_discrete_sequence=px.colors.qualitative.Bold
         )
-        fig_face3.update_layout(xaxis_title=x_title_3, yaxis_title=y_title_3, template='plotly_dark')
+        fig_face3.update_layout(xaxis_title=x_title_3, yaxis_title=y_title_3, template='plotly_white')
         st.plotly_chart(fig_face3, use_container_width=True)
 
 # ==========================================
@@ -548,7 +521,7 @@ with tab3:
                 y="Proporción",
                 color=col_name,
                 barmode="stack",
-                color_discrete_sequence=['#38BDF8', '#818CF8', '#FB7185', '#34D399', '#FBBF24', '#A78BFA', '#F472B6'],
+                color_discrete_sequence=px.colors.qualitative.Pastel,
                 height=320
             )
             fig_v.update_layout(
@@ -565,7 +538,7 @@ with tab3:
                     font=dict(size=7),
                     tracegroupgap=2
                 ),
-                template='plotly_dark'
+                template='plotly_white'
             )
             st.plotly_chart(fig_v, use_container_width=True)
 
@@ -611,7 +584,7 @@ with tab3:
             )
         ),
         title='Comparativa de Firmas de ADN por Clase LCA (%)',
-        template='plotly_dark',
+        template='plotly_white',
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8))
     )
     st.plotly_chart(fig_radar, use_container_width=True)
@@ -733,7 +706,7 @@ with tab5:
             title="Proporción de Compras con Descuento por Segmento RFM",
             color_discrete_sequence=px.colors.qualitative.Vivid
         )
-        fig_promo_rfm.update_layout(template='plotly_dark')
+        fig_promo_rfm.update_layout(template='plotly_white')
         st.plotly_chart(fig_promo_rfm, use_container_width=True)
         
     with c_p2:
@@ -747,7 +720,7 @@ with tab5:
             title="Proporción de Compras con Descuento por Clase LCA",
             color_discrete_sequence=px.colors.qualitative.Vivid
         )
-        fig_promo_lca.update_layout(template='plotly_dark')
+        fig_promo_lca.update_layout(template='plotly_white')
         st.plotly_chart(fig_promo_lca, use_container_width=True)
         
     st.subheader("Cruce de Sensibilidad a Promociones (Matriz Crossover de Descuento)")
@@ -886,20 +859,11 @@ with tab6:
         for c_idx, rfm_name in enumerate(rfm_existing):
             sub = filtered_df[(filtered_df['Cluster_LCA_Nombre'] == lca_name) & (filtered_df['Cluster_RFM_Nombre'] == rfm_name)]
             if len(sub) > 0:
-                # Mode category share
-                cat_counts = sub['preferred_category'].value_counts(normalize=True) * 100
-                top_pct = cat_counts.iloc[0] if len(cat_counts) > 0 else 0
-                
-                # Scale between 15% and 60% for optimal color depth
-                pct_scaled = (top_pct - 15.0) / (60.0 - 15.0)
-                pct_scaled = max(0.0, min(1.0, pct_scaled))
-                
-                # Column 0: z from 0 to 1
-                # Column 1: z from 2 to 3
-                # Column 2: z from 4 to 5
-                cat_ids[r_idx, c_idx] = c_idx * 2.0 + pct_scaled
+                # Color by column index (c_idx) and row index (r_idx) to differentiate columns using different tones of masculine light blues
+                cat_ids[r_idx, c_idx] = c_idx * 0.4 + r_idx * 0.1
                 
                 # Calculate Top 3 categories
+                cat_counts = sub['preferred_category'].value_counts(normalize=True) * 100
                 top3 = cat_counts.head(3)
                 
                 top3_lines = []
@@ -911,45 +875,32 @@ with tab6:
                 cat_texts[r_idx, c_idx] = "<br>".join(top3_lines)
             else:
                 cat_texts[r_idx, c_idx] = "Sin Datos"
-                cat_ids[r_idx, c_idx] = c_idx * 2.0
+                cat_ids[r_idx, c_idx] = -1
                 
-    # Define custom masculine colorscale to give each column its own tone/hue
-    # Column 0 (z: 0 to 1) -> Midnight/Navy Blue
-    # Column 1 (z: 2 to 3) -> Steel/Charcoal Gray
-    # Column 2 (z: 4 to 5) -> Petroleum/Deep Teal
-    column_colorscale = [
-        # Column 0: Navy Blue [0.0, 0.2]
-        [0.0, "#F8FAFC"],
-        [0.02, "#93C5FD"],
-        [0.2, "#1E3A8A"],
+    # Masculine light/clear colorscale (different tones/shades of the blue/slate family)
+    # Column 0: Light Sky Blue tones (0.0 to 0.2)
+    # Column 1: Light Indigo/Steel Blue tones (0.4 to 0.6)
+    # Column 2: Light Slate/Navy Blue tones (0.8 to 1.0)
+    masculine_colorscale = [
+        [0.0, '#E0F2FE'],  # Sky blue 100
+        [0.1, '#BAE6FD'],  # Sky blue 200
+        [0.2, '#7DD3FC'],  # Sky blue 300
         
-        # Gap
-        [0.21, "#FFFFFF"],
-        [0.39, "#FFFFFF"],
+        [0.4, '#E0E7FF'],  # Indigo blue 100
+        [0.5, '#C7D2FE'],  # Indigo blue 200
+        [0.6, '#A5B4FC'],  # Indigo blue 300
         
-        # Column 1: Steel/Charcoal Gray [0.4, 0.6]
-        [0.4, "#F8FAFC"],
-        [0.42, "#94A3B8"],
-        [0.6, "#334155"],
-        
-        # Gap
-        [0.61, "#FFFFFF"],
-        [0.79, "#FFFFFF"],
-        
-        # Column 2: Petroleum/Deep Teal [0.8, 1.0]
-        [0.8, "#F0FDFA"],
-        [0.82, "#5EEAD4"],
-        [1.0, "#0F766E"]
+        [0.8, '#F1F5F9'],  # Slate 50
+        [0.9, '#E2E8F0'],  # Slate 100
+        [1.0, '#CBD5E1']   # Slate 200
     ]
-    
+
     # Create the heatmap
     fig_cat_cross = go.Figure(data=go.Heatmap(
         z=cat_ids,
         x=rfm_existing,
         y=lca_existing,
-        colorscale=column_colorscale,
-        zmin=0.0,
-        zmax=5.0,
+        colorscale=masculine_colorscale,
         text=cat_texts,
         texttemplate="%{text}",
         hoverinfo="text",
@@ -961,7 +912,7 @@ with tab6:
         yaxis_title="Eje Y: Clase Demográfica (LCA)",
         margin=dict(l=0, r=0, b=0, t=40),
         height=380,
-        template='plotly_dark'
+        template='plotly_white'
     )
     
     st.plotly_chart(fig_cat_cross, use_container_width=True)
@@ -996,7 +947,7 @@ with tab7:
             marker=dict(line=dict(color='#FFFFFF', width=2))
         )
         fig_churn_pie.update_layout(
-            template='plotly_dark',
+            template='plotly_white',
             margin=dict(t=50, b=20, l=20, r=20),
             legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5)
         )
@@ -1027,7 +978,7 @@ with tab7:
             labels={'membership_tier': 'Nivel de Membresía', 'churn_pct': 'Tasa de Cancelación (%)'}
         )
         fig_tier_churn.update_layout(
-            template='plotly_dark', 
+            template='plotly_white', 
             showlegend=False, 
             margin=dict(t=50, b=20, l=20, r=20),
             yaxis=dict(ticksuffix="%")
@@ -1098,7 +1049,7 @@ with tab7:
         yaxis_title="Eje Y: Clase Demográfica (LCA)",
         margin=dict(l=0, r=0, b=0, t=40),
         height=380,
-        template='plotly_dark'
+        template='plotly_white'
     )
     
     st.plotly_chart(fig_cross_churn, use_container_width=True)
@@ -1124,7 +1075,7 @@ with tab7:
             color_discrete_sequence=['#EC4899'] # Rose
         )
         fig_country_churn.update_layout(
-            template='plotly_dark',
+            template='plotly_white',
             margin=dict(t=50, b=20, l=20, r=20),
             xaxis=dict(ticksuffix="%")
         )
@@ -1154,7 +1105,7 @@ with tab7:
             color_discrete_sequence=['#8B5CF6'] # Purple
         )
         fig_age_churn.update_layout(
-            template='plotly_dark',
+            template='plotly_white',
             margin=dict(t=50, b=20, l=20, r=20),
             yaxis=dict(ticksuffix="%")
         )
@@ -1298,7 +1249,7 @@ with tab8:
             barmode='stack',
             title='Estructura de Costos vs Ganancia Estimada (USD)',
             yaxis_title='Dólares (USD)',
-            template='plotly_dark',
+            template='plotly_white',
             height=350
         )
         st.plotly_chart(fig_sim_bar, use_container_width=True)
@@ -1351,20 +1302,20 @@ with tab9:
         
         col_box1, col_box2 = st.columns(2)
         with col_box1:
-            fig_b1 = px.box(filtered_df, y='total_spend_usd', title='RFM - Monto: Gasto Total (USD)', color_discrete_sequence=['#38BDF8'])
-            fig_b1.update_layout(template='plotly_dark')
+            fig_b1 = px.box(filtered_df, y='total_spend_usd', title='RFM - Monto: Gasto Total (USD)', color_discrete_sequence=['#87CEFA'])
+            fig_b1.update_layout(template='plotly_white')
             st.plotly_chart(fig_b1, use_container_width=True)
             
-            fig_b3 = px.box(filtered_df, y='days_since_last_purchase', title='RFM - Recencia: Días desde Última Compra', color_discrete_sequence=['#FB7185'])
-            fig_b3.update_layout(template='plotly_dark')
+            fig_b3 = px.box(filtered_df, y='days_since_last_purchase', title='RFM - Recencia: Días desde Última Compra', color_discrete_sequence=['#FA8072'])
+            fig_b3.update_layout(template='plotly_white')
             st.plotly_chart(fig_b3, use_container_width=True)
         with col_box2:
-            fig_b2 = px.box(filtered_df, y='total_orders', title='RFM - Frecuencia: Cantidad de Órdenes', color_discrete_sequence=['#34D399'])
-            fig_b2.update_layout(template='plotly_dark')
+            fig_b2 = px.box(filtered_df, y='total_orders', title='RFM - Frecuencia: Cantidad de Órdenes', color_discrete_sequence=['#98FB98'])
+            fig_b2.update_layout(template='plotly_white')
             st.plotly_chart(fig_b2, use_container_width=True)
             
-            fig_b4 = px.box(filtered_df, y='age', title='Sociodemográfico - Edad de los Clientes', color_discrete_sequence=['#FBBF24'])
-            fig_b4.update_layout(template='plotly_dark')
+            fig_b4 = px.box(filtered_df, y='age', title='Sociodemográfico - Edad de los Clientes', color_discrete_sequence=['#DDA0DD'])
+            fig_b4.update_layout(template='plotly_white')
             st.plotly_chart(fig_b4, use_container_width=True)
 
         st.markdown('<div class="section-header">Estabilización de Varianza: Transformación Logarítmica + Z-Score</div>', unsafe_allow_html=True)
@@ -1378,9 +1329,9 @@ with tab9:
 
         fig_z = px.box(df_long_z, x='Métrica', y='Valor Z (Log+ZScore)', color='Métrica',
                        title='RFM: Transformación Logarítmica + Z-Score',
-                       color_discrete_sequence=['#38BDF8', '#818CF8', '#FB7185', '#34D399', '#FBBF24'])
+                       color_discrete_sequence=px.colors.qualitative.Set2)
         fig_z.add_hline(y=0, line_dash="dash", line_color="red", annotation_text="Promedio (0)")
-        fig_z.update_layout(template='plotly_dark')
+        fig_z.update_layout(template='plotly_white')
         st.plotly_chart(fig_z, use_container_width=True)
 
         st.markdown('<div class="section-header">Análisis Exploratorio Inicial (EDA - Retención y Membresías)</div>', unsafe_allow_html=True)
@@ -1441,7 +1392,7 @@ with tab9:
                 zaxis_title='Gasto (USD)'
             ),
             margin=dict(r=0, l=0, b=0, t=40),
-            template='plotly_dark',
+            template='plotly_white',
             height=600
         )
         st.plotly_chart(fig_3d_rfm, use_container_width=True)
@@ -1479,7 +1430,7 @@ with tab9:
             fig_box_orig.update_layout(
                 margin=dict(t=5, b=5, l=10, r=10),
                 yaxis_title=label_orig,
-                template='plotly_dark'
+                template='plotly_white'
             )
             st.plotly_chart(fig_box_orig, use_container_width=True)
             
@@ -1494,10 +1445,10 @@ with tab9:
             })
             fig_box_rfm = px.box(
                 df_long_z, x='Métrica', y='Valor Z', color='Métrica',
-                color_discrete_sequence=['#38BDF8', '#818CF8', '#FB7185', '#34D399', '#FBBF24'], height=200
+                color_discrete_sequence=px.colors.qualitative.Set2, height=200
             )
             fig_box_rfm.add_hline(y=0, line_dash="dash", line_color="red")
-            fig_box_rfm.update_layout(template='plotly_dark', showlegend=False, margin=dict(t=5, b=5, l=10, r=10))
+            fig_box_rfm.update_layout(template='plotly_white', showlegend=False, margin=dict(t=5, b=5, l=10, r=10))
             st.plotly_chart(fig_box_rfm, use_container_width=True)
             
         with col_c2:
@@ -1510,7 +1461,7 @@ with tab9:
             fig_elbow_rfm = px.line(x=rango_k, y=inertia_rfm, markers=True,
                                     labels={'x': 'Número de Segmentos (K)', 'y': 'Inercia (Distancia interna)'})
             fig_elbow_rfm.add_vline(x=3, line_dash="dot", line_color="red", annotation_text="K=3 (Codo Elegido)")
-            fig_elbow_rfm.update_layout(template='plotly_dark', height=400, margin=dict(t=10, b=10, l=10, r=10))
+            fig_elbow_rfm.update_layout(template='plotly_white', height=400, margin=dict(t=10, b=10, l=10, r=10))
             st.plotly_chart(fig_elbow_rfm, use_container_width=True)
 
         st.markdown('<div class="section-header">🌌 Proyección PCA 2D: Estabilidad y Separación del Espacio K-Means</div>', unsafe_allow_html=True)
@@ -1530,7 +1481,7 @@ with tab9:
             fig_pca_rfm_km.update_layout(
                 xaxis_title=f'PC1 ({EV_RFM_1*100:.1f}%)',
                 yaxis_title=f'PC2 ({EV_RFM_2*100:.1f}%)',
-                template='plotly_dark',
+                template='plotly_white',
                 legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8))
             )
             st.plotly_chart(fig_pca_rfm_km, use_container_width=True)
@@ -1547,7 +1498,7 @@ with tab9:
             fig_raw_rfm_2d.update_layout(
                 xaxis_title='Recencia (Días inactivo)',
                 yaxis_title='Gasto Promedio (USD)',
-                template='plotly_dark',
+                template='plotly_white',
                 legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8))
             )
             st.plotly_chart(fig_raw_rfm_2d, use_container_width=True)
@@ -1598,7 +1549,7 @@ with tab9:
                 margin=dict(l=160, r=20, t=20, b=20),
                 xaxis_title="Clase Latente Sociodemográfica (LCA)",
                 yaxis_title="Características (Variable: Categoría)",
-                template='plotly_dark'
+                template='plotly_white'
             )
             st.plotly_chart(fig_h_a, use_container_width=True)
         
@@ -1629,7 +1580,7 @@ with tab9:
         fig_bubble_a.update_layout(
             xaxis_title='Edad Promedio (Años)',
             yaxis_title='Gasto Promedio por Cliente (USD)',
-            template='plotly_dark',
+            template='plotly_white',
             showlegend=False
         )
         st.plotly_chart(fig_bubble_a, use_container_width=True)
@@ -1653,16 +1604,16 @@ with tab9:
             fig_sel_bic = go.Figure()
             fig_sel_bic.add_trace(go.Scatter(x=df_selection_data['k'], y=df_selection_data['BIC'], name='BIC', mode='lines+markers', line=dict(color='#2E86AB', width=2)))
             fig_sel_bic.add_trace(go.Scatter(x=df_selection_data['k'], y=df_selection_data['AIC'], name='AIC', mode='lines+markers', line=dict(color='#F18F01', width=2, dash='dash')))
-            fig_sel_bic.update_layout(title='BIC y AIC (↓ mejor)', xaxis_title='Clases (K)', template='plotly_dark')
+            fig_sel_bic.update_layout(title='BIC y AIC (↓ mejor)', xaxis_title='Clases (K)', template='plotly_white')
             st.plotly_chart(fig_sel_bic, use_container_width=True)
         with col_sel2:
             fig_sel_ent = px.line(df_selection_data, x='k', y='Entropía', markers=True, title='Entropía Normalizada (↑ mejor)', color_discrete_sequence=['#C73E1D'])
-            fig_sel_ent.update_layout(template='plotly_dark')
+            fig_sel_ent.update_layout(template='plotly_white')
             st.plotly_chart(fig_sel_ent, use_container_width=True)
         with col_sel3:
             fig_sel_size = px.bar(df_selection_data, x='k', y='Clase_Minima', title='Clase más Pequeña (% total)', color_discrete_sequence=['#44BBA4'])
             fig_sel_size.add_hline(y=5, line_dash="dash", line_color="red", annotation_text="Mínimo 5%")
-            fig_sel_size.update_layout(template='plotly_dark')
+            fig_sel_size.update_layout(template='plotly_white')
             st.plotly_chart(fig_sel_size, use_container_width=True)
             
         st.info("💡 **Justificación Científica del BIC**: El Criterio de Información Bayesiano (BIC) penaliza fuertemente el número de parámetros del modelo a medida que aumenta el tamaño de la muestra ($N=7,285$). Aunque el BIC continúa descendiendo levemente en $K=4$, la **Entropía Normalizada y la interpretabilidad comercial de negocio** señalan que $K=3$ es la separación óptima y con el tamaño mínimo de segmento más robusto (24.5%).")
@@ -1694,7 +1645,7 @@ with tab9:
         fig_num_heat.update_layout(
             title='Perfil de Clases LCA – Variables Numéricas (Promedios Reales Anotados)',
             xaxis_title="Clase Sociodemográfica LCA",
-            template='plotly_dark',
+            template='plotly_white',
             height=400
         )
         st.plotly_chart(fig_num_heat, use_container_width=True)
@@ -1717,7 +1668,7 @@ with tab9:
                                   title='Método del Codo: Modelo Sociodemográfico K-Means',
                                   labels={'x': 'Número de Clusters (K)', 'y': 'Inercia'})
         fig_elbow_socio.add_vline(x=4, line_dash="dot", line_color="purple", annotation_text="Codo Sugerido K=4")
-        fig_elbow_socio.update_layout(template='plotly_dark')
+        fig_elbow_socio.update_layout(template='plotly_white')
         st.plotly_chart(fig_elbow_socio, use_container_width=True)
 
         st.markdown('<div class="section-header">🌌 Proyección PCA 2D: Clases Sociodemográficas K-Means vs LCA</div>', unsafe_allow_html=True)
@@ -1736,8 +1687,8 @@ with tab9:
 
             fig_pca_socio_km = px.scatter(df_pca_socio_km, x='PC1', y='PC2', color='Cluster',
                                           title='Separación Sociodemográfica K-Means PCA 2D',
-                                          color_discrete_sequence=['#38BDF8', '#818CF8', '#FB7185', '#34D399', '#FBBF24'], opacity=0.6)
-            fig_pca_socio_km.update_layout(template='plotly_dark')
+                                          color_discrete_sequence=px.colors.qualitative.Safe, opacity=0.6)
+            fig_pca_socio_km.update_layout(template='plotly_white')
             st.plotly_chart(fig_pca_socio_km, use_container_width=True)
             
         with col_comp_socio2:
@@ -1765,7 +1716,7 @@ with tab9:
                 color_discrete_sequence=px.colors.qualitative.Bold
             )
             fig_pca_socio.update_traces(marker=dict(size=6))
-            fig_pca_socio.update_layout(template='plotly_dark')
+            fig_pca_socio.update_layout(template='plotly_white')
             st.plotly_chart(fig_pca_socio, use_container_width=True)
 
         st.markdown('<div class="section-header">🔗 Correspondencia y Acuerdo entre LCA y K-Means</div>', unsafe_allow_html=True)
@@ -1792,7 +1743,7 @@ with tab9:
             title='Correspondencia entre Clases LCA y Clusters K-Means (Sociodemográficos)',
             xaxis_title="Segmentos K-Means",
             yaxis_title="Clases LCA",
-            template='plotly_dark',
+            template='plotly_white',
             height=350
         )
         st.plotly_chart(fig_cross_heat, use_container_width=True)
@@ -1814,7 +1765,7 @@ with tab9:
         fig_diag.update_layout(
             xaxis_title='Certeza de Asignación (Probabilidad Máxima)',
             yaxis_title='Cantidad de Clientes',
-            template='plotly_dark',
+            template='plotly_white',
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8))
         )
         st.plotly_chart(fig_diag, use_container_width=True)
