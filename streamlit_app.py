@@ -931,67 +931,6 @@ with tab7:
     Este módulo analiza a los clientes que abandonaron la plataforma (**8.9% global / 715 clientes**) y establece las pautas estratégicas de retención antes de simular escenarios de campañas comerciales en el simulador de ROI.
     """)
     
-    col_ch1, col_ch2 = st.columns(2)
-    
-    with col_ch1:
-        # Donut Chart for Active vs Churned
-        churn_counts = filtered_df_raw['churned'].value_counts()
-        labels_churn = ['Clientes Activos (Fidelizados)', 'Clientes Fugados (Churned)']
-        fig_churn_pie = px.pie(
-            names=labels_churn,
-            values=churn_counts.values,
-            hole=0.45,
-            color_discrete_sequence=['#10B981', '#EF4444'], # Emerald & Crimson
-            title="Distribución de Clientes Activos vs. Fugados"
-        )
-        fig_churn_pie.update_traces(
-            textposition='inside', 
-            textinfo='percent+label',
-            marker=dict(line=dict(color='#FFFFFF', width=2))
-        )
-        fig_churn_pie.update_layout(
-            template='plotly_white',
-            margin=dict(t=50, b=20, l=20, r=20),
-            legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5)
-        )
-        st.plotly_chart(fig_churn_pie, use_container_width=True)
-        
-    with col_ch2:
-        # Churn Rate by Membership Tier
-        tier_churn_rate = filtered_df_raw.groupby('membership_tier')['churned'].mean().reset_index()
-        tier_churn_rate['churn_pct'] = tier_churn_rate['churned'] * 100
-        tier_churn_rate = tier_churn_rate.sort_values(by='churn_pct', ascending=False)
-        
-        # Color mapping for tiers matching the dashboard theme
-        color_map = {
-            'Free': '#6B7280',      # Gray
-            'Gold': '#F59E0B',      # Gold/Amber
-            'Silver': '#9CA3AF',    # Silver/Light Gray
-            'Platinum': '#3B82F6'   # Blue/Platinum
-        }
-        
-        fig_tier_churn = px.bar(
-            tier_churn_rate,
-            x='membership_tier',
-            y='churn_pct',
-            text=[f"{val:.2f}%" for val in tier_churn_rate['churn_pct']],
-            color='membership_tier',
-            color_discrete_map=color_map,
-            title="Tasa de Deserción (Churn Rate) por Nivel de Membresía",
-            labels={'membership_tier': 'Nivel de Membresía', 'churn_pct': 'Tasa de Cancelación (%)'}
-        )
-        fig_tier_churn.update_layout(
-            template='plotly_white', 
-            showlegend=False, 
-            margin=dict(t=50, b=20, l=20, r=20),
-            yaxis=dict(ticksuffix="%")
-        )
-        fig_tier_churn.update_traces(
-            marker=dict(line=dict(color='#FFFFFF', width=1)),
-            textposition='outside'
-        )
-        st.plotly_chart(fig_tier_churn, use_container_width=True)
-        
     # Churn Crossover Matrix Heatmap
     st.markdown('<div class="section-header">🎯 Matriz de Crossover de Fuga de Clientes (Tasa de Churn por Micro-segmento)</div>', unsafe_allow_html=True)
     st.write("""
@@ -1056,6 +995,68 @@ with tab7:
     )
     
     st.plotly_chart(fig_cross_churn, use_container_width=True)
+    
+    # Active vs Churned and Tier Churn Charts
+    col_ch1, col_ch2 = st.columns(2)
+    
+    with col_ch1:
+        # Donut Chart for Active vs Churned
+        churn_counts = filtered_df_raw['churned'].value_counts()
+        labels_churn = ['Clientes Activos (Fidelizados)', 'Clientes Fugados (Churned)']
+        fig_churn_pie = px.pie(
+            names=labels_churn,
+            values=churn_counts.values,
+            hole=0.45,
+            color_discrete_sequence=['#10B981', '#EF4444'], # Emerald & Crimson
+            title="Distribución de Clientes Activos vs. Fugados"
+        )
+        fig_churn_pie.update_traces(
+            textposition='inside', 
+            textinfo='percent+label',
+            marker=dict(line=dict(color='#FFFFFF', width=2))
+        )
+        fig_churn_pie.update_layout(
+            template='plotly_white',
+            margin=dict(t=50, b=20, l=20, r=20),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5)
+        )
+        st.plotly_chart(fig_churn_pie, use_container_width=True)
+        
+    with col_ch2:
+        # Churn Rate by Membership Tier
+        tier_churn_rate = filtered_df_raw.groupby('membership_tier')['churned'].mean().reset_index()
+        tier_churn_rate['churn_pct'] = tier_churn_rate['churned'] * 100
+        tier_churn_rate = tier_churn_rate.sort_values(by='churn_pct', ascending=False)
+        
+        # Color mapping for tiers matching the dashboard theme
+        color_map = {
+            'Free': '#6B7280',      # Gray
+            'Gold': '#F59E0B',      # Gold/Amber
+            'Silver': '#9CA3AF',    # Silver/Light Gray
+            'Platinum': '#3B82F6'   # Blue/Platinum
+        }
+        
+        fig_tier_churn = px.bar(
+            tier_churn_rate,
+            x='membership_tier',
+            y='churn_pct',
+            text=[f"{val:.2f}%" for val in tier_churn_rate['churn_pct']],
+            color='membership_tier',
+            color_discrete_map=color_map,
+            title="Tasa de Deserción (Churn Rate) por Nivel de Membresía",
+            labels={'membership_tier': 'Nivel de Membresía', 'churn_pct': 'Tasa de Cancelación (%)'}
+        )
+        fig_tier_churn.update_layout(
+            template='plotly_white', 
+            showlegend=False, 
+            margin=dict(t=50, b=20, l=20, r=20),
+            yaxis=dict(ticksuffix="%")
+        )
+        fig_tier_churn.update_traces(
+            marker=dict(line=dict(color='#FFFFFF', width=1)),
+            textposition='outside'
+        )
+        st.plotly_chart(fig_tier_churn, use_container_width=True)
     
     # Second row: country / region analysis and age groups
     st.markdown('<div class="section-header">🌍 Análisis Geográfico y Perfil de Fuga</div>', unsafe_allow_html=True)
