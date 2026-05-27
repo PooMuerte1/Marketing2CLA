@@ -506,14 +506,22 @@ with tab3:
                 color=col_name,
                 barmode="stack",
                 color_discrete_sequence=px.colors.qualitative.Pastel,
-                height=250
+                height=320
             )
             fig_v.update_layout(
-                margin=dict(l=10, r=10, t=10, b=10),
-                xaxis=dict(title='', showticklabels=True),
+                margin=dict(l=10, r=10, t=10, b=120),
+                xaxis=dict(title='', showticklabels=True, tickangle=-30, tickfont=dict(size=9)),
                 yaxis=dict(tickformat='.0%', title=''),
                 showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=8)),
+                legend=dict(
+                    orientation="h",
+                    yanchor="top",
+                    y=-0.35,
+                    xanchor="center",
+                    x=0.5,
+                    font=dict(size=8),
+                    tracegroupgap=2
+                ),
                 template='plotly_white'
             )
             st.plotly_chart(fig_v, use_container_width=True)
