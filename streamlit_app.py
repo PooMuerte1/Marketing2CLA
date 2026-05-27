@@ -1235,42 +1235,101 @@ with tab8:
     promo_uplift = discount_pct * elasticity_coefficient
     promo_conv_rate = baseline_conv * (1.0 + promo_uplift)
     
-    conversions = int(targeted_customers * promo_conv_rate)
-    gross_revenue = conversions * avg_spend
-    net_revenue = gross_revenue * (1.0 - discount_pct)
+    # Conversiones esperadas
+    conversions_total = int(targeted_customers * promo_conv_rate)
+    conversions_baseline = int(targeted_customers * baseline_conv)
+    conversions_incremental = max(0, conversions_total - conversions_baseline)
     
-    promo_cost = gross_revenue * discount_pct
-    total_campaign_cost = effective_budget_used + promo_cost
+    # ── Traditional Attributed Calculations ──
+    gross_revenue_total = conversions_total * avg_spend
+    net_revenue_total = gross_revenue_total * (1.0 - discount_pct)
+    promo_cost_total = gross_revenue_total * discount_pct
+    net_profit_total = net_revenue_total - effective_budget_used
+    roi_pct_total = (net_profit_total / effective_budget_used) * 100.0 if effective_budget_used > 0 else 0.0
     
-    net_profit = net_revenue - effective_budget_used
-    roi_pct = (net_profit / effective_budget_used) * 100.0 if effective_budget_used > 0 else 0.0
+    # ── Advanced True Incremental Calculations ──
+    # Revenue that would have happened organically anyway
+    baseline_revenue = conversions_baseline * avg_spend
+    # Cost of cannibalization: discount given to organic buyers who would buy anyway
+    cannibalization_cost = conversions_baseline * avg_spend * discount_pct
+    # Incremental revenue from the new buyers only
+    gross_revenue_incremental = conversions_incremental * avg_spend
+    # Net incremental revenue subtracting the cannibalization cost of organic baseline
+    net_revenue_incremental = (gross_revenue_incremental * (1.0 - discount_pct)) - cannibalization_cost
+    # Net incremental profit
+    net_profit_incremental = net_revenue_incremental - effective_budget_used
+    # Incremental ROI
+    roi_pct_incremental = (net_profit_incremental / effective_budget_used) * 100.0 if effective_budget_used > 0 else 0.0
     
     # 4. DISPLAY RESULTS
     st.markdown('<div class="section-header">📈 Proyección de Métricas y Retorno Comercial</div>', unsafe_allow_html=True)
     
+    eval_model = st.radio(
+        "**Modelo de Evaluación Financiera de la Campaña**:",
+        options=[
+            "Retorno Total Atribuido (Tradicional: incluye ventas orgánicas e incrementales juntas)",
+            "Retorno Neto Incremental Avanzado (Recomendado: descuenta ventas orgánicas y resta costo de canibalización) 💡"
+        ],
+        index=1,
+        help="El modelo tradicional muestra todos los ingresos del grupo alcanzado, lo que puede sobreestimar el impacto. El modelo incremental aísla solo las ventas adicionales generadas directamente por la promoción y resta la canibalización de ventas orgánicas."
+    )
+    
+    is_incremental = "Incremental" in eval_model
+    
+    if is_incremental:
+        display_net_revenue = net_revenue_incremental
+        display_net_profit = net_profit_incremental
+        display_roi = roi_pct_incremental
+        display_conversions = conversions_incremental
+        display_promo_cost = cannibalization_cost + (gross_revenue_incremental * discount_pct)
+    else:
+        display_net_revenue = net_revenue_total
+        display_net_profit = net_profit_total
+        display_roi = roi_pct_total
+        display_conversions = conversions_total
+        display_promo_cost = promo_cost_total
+        
     col_stat1, col_stat2, col_stat3, col_stat4 = st.columns(4)
     
     with col_stat1:
         st.metric("Clientes Impactados (Reach)", f"{targeted_customers:,}", f"De {N_segment:,} en base")
         
     with col_stat2:
-        st.metric("Tasa de Conversión Promo", f"{promo_conv_rate*100:.2f}%", f"+{(promo_conv_rate - baseline_conv)*100:.2f}% de incremento")
+        if is_incremental:
+            st.metric("Conversiones Incrementales (Uplift)", f"{display_conversions:,}", f"+{(promo_conv_rate - baseline_conv)*100:.2f}% de conversión")
+        else:
+            st.metric("Conversiones Totales Promo", f"{display_conversions:,}", f"+{(promo_conv_rate - baseline_conv)*100:.2f}% de conversión")
         
     with col_stat3:
-        st.metric("Ingreso Neto Estimado", f"${net_revenue:,.2f} USD")
+        if is_incremental:
+            st.metric("Ingreso Neto Incremental", f"${display_net_revenue:,.2f} USD")
+        else:
+            st.metric("Ingreso Neto Estimado", f"${display_net_revenue:,.2f} USD")
         
     with col_stat4:
-        st.metric("Retorno Neto (Ganancia)", f"${net_profit:,.2f} USD", f"ROI: {roi_pct:.1f}%", delta_color="normal" if roi_pct >= 0 else "inverse")
+        if is_incremental:
+            st.metric("Ganancia Incremental Real", f"${display_net_profit:,.2f} USD", f"ROI Incremental: {display_roi:.1f}%", delta_color="normal" if display_roi >= 0 else "inverse")
+        else:
+            st.metric("Retorno Neto (Ganancia)", f"${display_net_profit:,.2f} USD", f"ROI: {display_roi:.1f}%", delta_color="normal" if display_roi >= 0 else "inverse")
         
     # Render charts and recommendations side-by-side
     c_graph1, c_graph2 = st.columns([3, 2])
     
     with c_graph1:
-        fig_sim_bar = go.Figure(data=[
-            go.Bar(name='Costo de Contactación (Medios)', x=['Campaña'], y=[effective_budget_used], marker_color='#3B82F6'),
-            go.Bar(name='Costo de Descuento (Margen Perdido)', x=['Campaña'], y=[promo_cost], marker_color='#EF4444'),
-            go.Bar(name='Ganancia Neta', x=['Campaña'], y=[net_profit if net_profit > 0 else 0], marker_color='#10B981')
-        ])
+        if is_incremental:
+            fig_sim_bar = go.Figure(data=[
+                go.Bar(name='Costo de Contactación (Medios)', x=['Campaña Incremental'], y=[effective_budget_used], marker_color='#3B82F6'),
+                go.Bar(name='Costo de Canibalización (Orgánicos)', x=['Campaña Incremental'], y=[cannibalization_cost], marker_color='#F59E0B'),
+                go.Bar(name='Ganancia Incremental Real', x=['Campaña Incremental'], y=[max(0, display_net_profit)], marker_color='#10B981'),
+                go.Bar(name='Pérdida Incremental (Destrucción)', x=['Campaña Incremental'], y=[-display_net_profit if display_net_profit < 0 else 0], marker_color='#EF4444')
+            ])
+        else:
+            fig_sim_bar = go.Figure(data=[
+                go.Bar(name='Costo de Contactación (Medios)', x=['Campaña Total'], y=[effective_budget_used], marker_color='#3B82F6'),
+                go.Bar(name='Costo de Descuento (Margen Perdido)', x=['Campaña Total'], y=[promo_cost_total], marker_color='#EF4444'),
+                go.Bar(name='Ganancia Neta Atribuida', x=['Campaña Total'], y=[max(0, display_net_profit)], marker_color='#10B981')
+            ])
+            
         fig_sim_bar.update_layout(
             barmode='stack',
             title='Estructura de Costos vs Ganancia Estimada (USD)',
@@ -1281,25 +1340,25 @@ with tab8:
         st.plotly_chart(fig_sim_bar, use_container_width=True)
         
     with c_graph2:
-        if roi_pct > 20.0:
+        if display_roi > 20.0:
             st.success(f"""
             ### 🟢 RECOMENDACIÓN: **EJECUTAR CAMPAÑA**
-            - **ROI Altamente Rentable** ({roi_pct:.1f}%). 
+            - **ROI Altamente Rentable** ({display_roi:.1f}%). 
             - Este segmento responde de manera excelente a promociones y el ticket promedio absorbe con creces la pérdida de margen del descuento.
             - **Acción Táctica**: Lanzar campaña flash push móvil en la categoría prioritaria (**{sub_df['preferred_category'].mode()[0]}**) utilizando el canal prioritario (**{sub_df['acquisition_channel'].mode()[0]}**) los fines de semana.
             """)
-        elif roi_pct >= 0.0:
+        elif display_roi >= 0.0:
             st.warning(f"""
             ### 🟡 RECOMENDACIÓN: **OPTIMIZAR CAMPAÑA**
-            - **ROI Marginal** ({roi_pct:.1f}%).
+            - **ROI Marginal** ({display_roi:.1f}%).
             - La campaña apenas logra cubrir los costos operativos e incentivos.
             - **Acción Táctica**: Reduce el incentivo al **{max(5.0, (discount_pct*100)-5):.0f}%** para proteger margen, u optimiza costes digitales de contactación usando canales orgánicos directos (ej. email marketing) para bajar el coste por Reach por debajo de **${cost_per_reach:.2f}**.
             """)
         else:
             st.error(f"""
             ### 🔴 RECOMENDACIÓN: **CANCELAR / NO EJECUTAR**
-            - **ROI Destructor de Valor** ({roi_pct:.1f}%).
-            - **¿Por qué ocurre?**: Este segmento es **orgánico e insensible a ofertas** (compra sin necesidad de descuento) o el **costo de contactación** supera el valor neto del ticket promedio. Aplicar promociones aquí es regalar margen en clientes que comprarían de todos modos.
+            - **ROI Destructor de Valor** ({display_roi:.1f}%).
+            - **¿Por qué ocurre?**: Este segmento es **orgánico e insensible a ofertas** (compra sin necesidad de descuento) o el **costo de contactación + canibalización** supera con creces el valor neto del ticket incremental. Aplicar promociones aquí es regalar margen en clientes que comprarían de todos modos.
             - **Acción Táctica**: Cancelar campaña de cupones masivos. Reemplazar por campañas relacionales de posicionamiento de valor y fidelidad premium basadas en servicio de entrega prioritario.
             """)
 
