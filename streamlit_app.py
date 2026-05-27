@@ -488,18 +488,24 @@ with tab3:
         ('preferred_category', 'Categoría Preferida', col_c)
     ]
 
-    # Top 3 categories overall (to keep legend clean)
-    _top3_cats = filtered_df['preferred_category'].value_counts().head(3).index.tolist()
-
     for col_name, friendly_name, target_col in lca_vars_plot:
         with target_col:
             st.markdown(f"**{friendly_name}**")
 
-            # For preferred_category: collapse non-top-3 into "Otras"
+            # For preferred_category: top 3 per LCA class → union → rest = "Otras"
             if col_name == 'preferred_category':
+                _top3_per_class = set()
+                for _cls in filtered_df['Cluster_LCA_Nombre'].unique():
+                    _cls_top3 = (
+                        filtered_df[filtered_df['Cluster_LCA_Nombre'] == _cls]['preferred_category']
+                        .value_counts(normalize=True)
+                        .head(3)
+                        .index.tolist()
+                    )
+                    _top3_per_class.update(_cls_top3)
                 plot_df = filtered_df.copy()
                 plot_df[col_name] = plot_df[col_name].apply(
-                    lambda x: x if x in _top3_cats else 'Otras'
+                    lambda x: x if x in _top3_per_class else 'Otras'
                 )
             else:
                 plot_df = filtered_df
