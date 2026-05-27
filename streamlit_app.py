@@ -598,6 +598,22 @@ with tab4:
         filtered_df['Cluster_RFM_Nombre']
     )
     
+    # Fixed axis order: K-Means 0→1→2 on X, LCA 0→1→2 on Y (top-to-bottom)
+    rfm_order_main = [
+        "Clase K-Means 0: Frecuencia Alta, Gasto Alto (En Riesgo)",
+        "Clase K-Means 1: Frecuencia Alta, Gasto Alto (Activos)",
+        "Clase K-Means 2: Frecuencia Baja, Gasto Bajo (Dormidos)"
+    ]
+    lca_order_main = [
+        "Clase LCA 0: Hombres Jóvenes (Redes Sociales, Hogar)",
+        "Clase LCA 1: Adultos (Búsqueda Orgánica, Ropa)",
+        "Clase LCA 2: Mujeres (Búsqueda Orgánica, Electrónica)"
+    ]
+    rfm_existing_main = [x for x in rfm_order_main if x in crossover_data.columns]
+    lca_existing_main = [y for y in lca_order_main if y in crossover_data.index]
+    crossover_data = crossover_data.reindex(index=lca_existing_main, columns=rfm_existing_main).fillna(0)
+    crossover_counts = crossover_counts.reindex(index=lca_existing_main, columns=rfm_existing_main).fillna(0)
+    
     col_mat, col_sub = st.columns([3, 2])
     
     with col_mat:
@@ -615,7 +631,8 @@ with tab4:
             xaxis_title="Eje X: Segmento RFM (K-Means)",
             yaxis_title="Eje Y: Clase Demográfica (LCA)",
             margin=dict(l=0, r=0, b=0, t=40),
-            height=400
+            height=400,
+            yaxis=dict(autorange='reversed')
         )
         st.plotly_chart(fig_cross, use_container_width=True)
         
@@ -692,7 +709,21 @@ with tab5:
     st.subheader("Cruce de Sensibilidad a Promociones (Matriz Crossover de Descuento)")
     
     # Calculate discount ratio across the crossover grid
+    # Fixed axis order: K-Means 0→1→2 on X, LCA 0→1→2 on Y (top-to-bottom)
+    rfm_order_promo = [
+        "Clase K-Means 0: Frecuencia Alta, Gasto Alto (En Riesgo)",
+        "Clase K-Means 1: Frecuencia Alta, Gasto Alto (Activos)",
+        "Clase K-Means 2: Frecuencia Baja, Gasto Bajo (Dormidos)"
+    ]
+    lca_order_promo = [
+        "Clase LCA 0: Hombres Jóvenes (Redes Sociales, Hogar)",
+        "Clase LCA 1: Adultos (Búsqueda Orgánica, Ropa)",
+        "Clase LCA 2: Mujeres (Búsqueda Orgánica, Electrónica)"
+    ]
     crossover_promo = filtered_df.groupby(['Cluster_LCA_Nombre', 'Cluster_RFM_Nombre'])['discount_ratio'].mean().unstack()
+    rfm_p_existing = [x for x in rfm_order_promo if x in crossover_promo.columns]
+    lca_p_existing = [y for y in lca_order_promo if y in crossover_promo.index]
+    crossover_promo = crossover_promo.reindex(index=lca_p_existing, columns=rfm_p_existing).fillna(0)
     
     col_mat_p, col_details_p = st.columns([3, 2])
     
@@ -710,7 +741,8 @@ with tab5:
             xaxis_title="Segmento RFM (K-Means)",
             yaxis_title="Clase Demográfica (LCA)",
             margin=dict(l=0, r=0, b=0, t=40),
-            height=400
+            height=400,
+            yaxis=dict(autorange='reversed')
         )
         st.plotly_chart(fig_cross_promo, use_container_width=True)
         
@@ -791,14 +823,14 @@ with tab6:
     
     # We will compute the mode category and its share for each crossover cell
     rfm_order = [
-        "Clase K-Means 1: Frecuencia Alta, Gasto Alto (Activos)",
         "Clase K-Means 0: Frecuencia Alta, Gasto Alto (En Riesgo)",
+        "Clase K-Means 1: Frecuencia Alta, Gasto Alto (Activos)",
         "Clase K-Means 2: Frecuencia Baja, Gasto Bajo (Dormidos)"
     ]
     lca_order = [
+        "Clase LCA 0: Hombres Jóvenes (Redes Sociales, Hogar)",
         "Clase LCA 1: Adultos (Búsqueda Orgánica, Ropa)",
-        "Clase LCA 2: Mujeres (Búsqueda Orgánica, Electrónica)",
-        "Clase LCA 0: Hombres Jóvenes (Redes Sociales, Hogar)"
+        "Clase LCA 2: Mujeres (Búsqueda Orgánica, Electrónica)"
     ]
     
     rfm_existing = [x for x in rfm_order if x in filtered_df['Cluster_RFM_Nombre'].unique()]
@@ -839,11 +871,11 @@ with tab6:
         z=cat_ids,
         x=rfm_existing,
         y=lca_existing,
-        colorscale='Viridis', # Beautiful colorful scale representing different categories
+        colorscale='Viridis',
         text=cat_texts,
         texttemplate="%{text}",
         hoverinfo="text",
-        showscale=False # Hide colorbar
+        showscale=False
     ))
     
     fig_cat_cross.update_layout(
@@ -851,7 +883,8 @@ with tab6:
         yaxis_title="Eje Y: Clase Demográfica (LCA)",
         margin=dict(l=0, r=0, b=0, t=40),
         height=380,
-        template='plotly_white'
+        template='plotly_white',
+        yaxis=dict(autorange='reversed')
     )
     
     st.plotly_chart(fig_cat_cross, use_container_width=True)
@@ -955,14 +988,14 @@ with tab7:
     
     # Ensure correct sorting order for K-Means and LCA
     rfm_order = [
-        "Clase K-Means 1: Frecuencia Alta, Gasto Alto (Activos)",
         "Clase K-Means 0: Frecuencia Alta, Gasto Alto (En Riesgo)",
+        "Clase K-Means 1: Frecuencia Alta, Gasto Alto (Activos)",
         "Clase K-Means 2: Frecuencia Baja, Gasto Bajo (Dormidos)"
     ]
     lca_order = [
+        "Clase LCA 0: Hombres Jóvenes (Redes Sociales, Hogar)",
         "Clase LCA 1: Adultos (Búsqueda Orgánica, Ropa)",
-        "Clase LCA 2: Mujeres (Búsqueda Orgánica, Electrónica)",
-        "Clase LCA 0: Hombres Jóvenes (Redes Sociales, Hogar)"
+        "Clase LCA 2: Mujeres (Búsqueda Orgánica, Electrónica)"
     ]
     
     # Filter order based on what exists in current filters
@@ -977,7 +1010,7 @@ with tab7:
         z=cross_churn_rate.values,
         x=cross_churn_rate.columns,
         y=cross_churn_rate.index,
-        colorscale='Reds', # Crimson/Reds scale representing churn
+        colorscale='Reds',
         text=np.vectorize(lambda count, rate: f"Fugados: {int(count)}<br>Tasa: {rate:.2f}%")(cross_churn_counts.values, cross_churn_rate.values),
         texttemplate="%{text}",
         hoverinfo="z"
@@ -988,7 +1021,8 @@ with tab7:
         yaxis_title="Eje Y: Clase Demográfica (LCA)",
         margin=dict(l=0, r=0, b=0, t=40),
         height=380,
-        template='plotly_white'
+        template='plotly_white',
+        yaxis=dict(autorange='reversed')
     )
     
     st.plotly_chart(fig_cross_churn, use_container_width=True)
