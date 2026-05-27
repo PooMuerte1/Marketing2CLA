@@ -715,40 +715,6 @@ with tab5:
         - **Micro-segmento Estrella para Ofertas**: El cruce de *Clase K-Means 2 × Clase LCA 0 (Hombres Jóvenes)* es el más receptivo del E-commerce, con un **39.3%** de sus pedidos realizados con descuentos, interactuando activamente en la categoría de **Home & Kitchen**.
         """)
         
-    st.markdown('<div class="section-header">🗺️ Mapa de Posicionamiento Estratégico LCA (Bubble Chart)</div>', unsafe_allow_html=True)
-    st.write("Cruzamos las dimensiones demográficas y de valor transaccional de los segmentos para crear un mapa de posicionamiento comercial estratégico. La **edad promedio** representa el eje X, el **gasto promedio** el eje Y, y el **tamaño de la burbuja** indica el volumen de clientes en cada segmento:")
-    
-    # Calculate group summaries for bubble chart
-    bubble_data = filtered_df.groupby('Cluster_LCA_Nombre').agg(
-        Clientes=('customer_id', 'count'),
-        Edad_Media=('age', 'mean'),
-        Gasto_Medio_USD=('total_spend_usd', 'mean')
-    ).reset_index()
-    
-    fig_bubble = px.scatter(
-        bubble_data,
-        x='Edad_Media',
-        y='Gasto_Medio_USD',
-        size='Clientes',
-        color='Cluster_LCA_Nombre',
-        hover_data=['Clientes'],
-        text='Cluster_LCA_Nombre',
-        title='Mapa de Posicionamiento Estratégico de Clases Latentes (LCA)',
-        size_max=50,
-        color_discrete_sequence=px.colors.qualitative.Bold
-    )
-    fig_bubble.update_traces(textposition='top center', marker=dict(opacity=0.85, line=dict(width=1.5, color='white')))
-    fig_bubble.update_layout(
-        xaxis_title='Edad Promedio (Años)',
-        yaxis_title='Gasto Promedio por Cliente (USD)',
-        template='plotly_white',
-        showlegend=False
-    )
-    st.plotly_chart(fig_bubble, use_container_width=True)
-
-
-
-
 
     # Option 1: Commercial Playbook Table
     st.markdown('<div class="section-header">📋 Playbook de Acciones Comerciales y Estratégicas por Clase</div>', unsafe_allow_html=True)
@@ -1519,6 +1485,38 @@ with tab9:
             )
             st.plotly_chart(fig_h_a, use_container_width=True)
         
+        st.markdown("---")
+
+        st.markdown('<div class="section-header">🗺️ Mapa de Posicionamiento Estratégico LCA (Bubble Chart)</div>', unsafe_allow_html=True)
+        st.write("Cruzamos las dimensiones demográficas y de valor transaccional de los segmentos para crear un mapa de posicionamiento comercial estratégico. La **edad promedio** representa el eje X, el **gasto promedio** el eje Y, y el **tamaño de la burbuja** indica el volumen de clientes en cada segmento:")
+        
+        bubble_data_a = filtered_df.groupby('Cluster_LCA_Nombre').agg(
+            Clientes=('customer_id', 'count'),
+            Edad_Media=('age', 'mean'),
+            Gasto_Medio_USD=('total_spend_usd', 'mean')
+        ).reset_index()
+        
+        fig_bubble_a = px.scatter(
+            bubble_data_a,
+            x='Edad_Media',
+            y='Gasto_Medio_USD',
+            size='Clientes',
+            color='Cluster_LCA_Nombre',
+            hover_data=['Clientes'],
+            text='Cluster_LCA_Nombre',
+            title='Mapa de Posicionamiento Estratégico de Clases Latentes (LCA)',
+            size_max=50,
+            color_discrete_sequence=px.colors.qualitative.Bold
+        )
+        fig_bubble_a.update_traces(textposition='top center', marker=dict(opacity=0.85, line=dict(width=1.5, color='white')))
+        fig_bubble_a.update_layout(
+            xaxis_title='Edad Promedio (Años)',
+            yaxis_title='Gasto Promedio por Cliente (USD)',
+            template='plotly_white',
+            showlegend=False
+        )
+        st.plotly_chart(fig_bubble_a, use_container_width=True)
+
         st.markdown("---")
 
         st.markdown('<div class="section-header">🎯 Ajuste y Selección de K: Barrido de Modelos LCA (AIC, BIC, Entropía)</div>', unsafe_allow_html=True)
