@@ -855,20 +855,24 @@ with tab6:
     cat_texts = np.empty((len(lca_existing), len(rfm_existing)), dtype=object)
     cat_ids = np.zeros((len(lca_existing), len(rfm_existing)))
     
-    unique_cats = sorted(filtered_df['preferred_category'].unique().tolist())
-    cat_to_id = {cat: idx for idx, cat in enumerate(unique_cats)}
-    
     for r_idx, lca_name in enumerate(lca_existing):
         for c_idx, rfm_name in enumerate(rfm_existing):
             sub = filtered_df[(filtered_df['Cluster_LCA_Nombre'] == lca_name) & (filtered_df['Cluster_RFM_Nombre'] == rfm_name)]
             if len(sub) > 0:
-                # Mode category for coloring
-                mode_series = sub['preferred_category'].mode()
-                mode_cat = mode_series[0] if len(mode_series) > 0 else "N/A"
-                cat_ids[r_idx, c_idx] = cat_to_id.get(mode_cat, 0)
+                # Mode category share
+                cat_counts = sub['preferred_category'].value_counts(normalize=True) * 100
+                top_pct = cat_counts.iloc[0] if len(cat_counts) > 0 else 0
+                
+                # Scale between 15% and 60% for optimal color depth
+                pct_scaled = (top_pct - 15.0) / (60.0 - 15.0)
+                pct_scaled = max(0.0, min(1.0, pct_scaled))
+                
+                # Column 0: z from 0 to 1
+                # Column 1: z from 2 to 3
+                # Column 2: z from 4 to 5
+                cat_ids[r_idx, c_idx] = c_idx * 2.0 + pct_scaled
                 
                 # Calculate Top 3 categories
-                cat_counts = sub['preferred_category'].value_counts(normalize=True) * 100
                 top3 = cat_counts.head(3)
                 
                 top3_lines = []
@@ -880,14 +884,45 @@ with tab6:
                 cat_texts[r_idx, c_idx] = "<br>".join(top3_lines)
             else:
                 cat_texts[r_idx, c_idx] = "Sin Datos"
-                cat_ids[r_idx, c_idx] = -1
+                cat_ids[r_idx, c_idx] = c_idx * 2.0
                 
+    # Define custom colorscale to give each column its own tone/hue
+    # Column 0 (z: 0 to 1) -> Indigo/Blue
+    # Column 1 (z: 2 to 3) -> Violet/Purple
+    # Column 2 (z: 4 to 5) -> Emerald/Teal
+    column_colorscale = [
+        # Column 0: Indigo/Blue [0.0, 0.2]
+        [0.0, "#EEF2F6"],
+        [0.02, "#E0E7FF"],
+        [0.2, "#4338CA"],
+        
+        # Gap
+        [0.21, "#FFFFFF"],
+        [0.39, "#FFFFFF"],
+        
+        # Column 1: Purple [0.4, 0.6]
+        [0.4, "#F5F3FF"],
+        [0.42, "#F3E8FF"],
+        [0.6, "#6D28D9"],
+        
+        # Gap
+        [0.61, "#FFFFFF"],
+        [0.79, "#FFFFFF"],
+        
+        # Column 2: Emerald/Teal [0.8, 1.0]
+        [0.8, "#ECFDF5"],
+        [0.82, "#D1FAE5"],
+        [1.0, "#047857"]
+    ]
+    
     # Create the heatmap
     fig_cat_cross = go.Figure(data=go.Heatmap(
         z=cat_ids,
         x=rfm_existing,
         y=lca_existing,
-        colorscale='Viridis',
+        colorscale=column_colorscale,
+        zmin=0.0,
+        zmax=5.0,
         text=cat_texts,
         texttemplate="%{text}",
         hoverinfo="text",
