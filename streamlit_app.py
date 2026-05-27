@@ -481,24 +481,33 @@ with tab3:
     st.write("Para analizar simultáneamente **todas las variables discretizadas del modelo** sin ocultar información tras un selector, se presenta la composición porcentual de cada clase para las 7 variables sociodemográficas y de comportamiento:")
     
     col_a, col_b, col_c = st.columns(3)
-    
+
     lca_vars_plot = [
         ('gender', 'Género', col_a),
-        ('age_group', 'Rango de Edad', col_a),
-        ('region', 'Región Geográfica', col_a),
-        ('membership_tier', 'Nivel de Membresía', col_b),
-        ('preferred_device', 'Dispositivo Preferido', col_b),
-        ('acquisition_channel', 'Canal de Adquisición', col_b),
+        ('age_group', 'Rango de Edad', col_b),
         ('preferred_category', 'Categoría Preferida', col_c)
     ]
-    
+
+    # Top 3 categories overall (to keep legend clean)
+    _top3_cats = filtered_df['preferred_category'].value_counts().head(3).index.tolist()
+
     for col_name, friendly_name, target_col in lca_vars_plot:
         with target_col:
             st.markdown(f"**{friendly_name}**")
-            dist_rel = filtered_df.groupby(['Cluster_LCA_Nombre', col_name]).size().unstack(level=1).fillna(0)
+
+            # For preferred_category: collapse non-top-3 into "Otras"
+            if col_name == 'preferred_category':
+                plot_df = filtered_df.copy()
+                plot_df[col_name] = plot_df[col_name].apply(
+                    lambda x: x if x in _top3_cats else 'Otras'
+                )
+            else:
+                plot_df = filtered_df
+
+            dist_rel = plot_df.groupby(['Cluster_LCA_Nombre', col_name]).size().unstack(level=1).fillna(0)
             dist_rel_pct = dist_rel.div(dist_rel.sum(axis=1), axis=0).reset_index()
             dist_rel_long = pd.melt(dist_rel_pct, id_vars=['Cluster_LCA_Nombre'], var_name=col_name, value_name='Proporción')
-            
+
             fig_v = px.bar(
                 dist_rel_long,
                 x="Cluster_LCA_Nombre",
@@ -525,7 +534,7 @@ with tab3:
                 template='plotly_white'
             )
             st.plotly_chart(fig_v, use_container_width=True)
-            
+
     # Radar de ADN a ancho completo en Tab 3
     st.markdown('<div class="section-header">🕸️ Radar de ADN: Perfil Multidimensional de las Clases Latentes</div>', unsafe_allow_html=True)
     st.write("El gráfico de radar permite comparar de manera simultánea el 'ADN' cualitativo de las tres clases latentes a lo largo de 5 dimensiones estratégicas de perfil. La forma y tamaño de los polígonos revela de un vistazo los rasgos identitarios de cada segmento meta de mercado:")
