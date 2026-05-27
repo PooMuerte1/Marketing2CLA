@@ -913,33 +913,33 @@ with tab6:
                 cat_texts[r_idx, c_idx] = "Sin Datos"
                 cat_ids[r_idx, c_idx] = c_idx * 2.0
                 
-    # Define custom colorscale to give each column its own tone/hue
-    # Column 0 (z: 0 to 1) -> Indigo/Blue
-    # Column 1 (z: 2 to 3) -> Violet/Purple
-    # Column 2 (z: 4 to 5) -> Emerald/Teal
+    # Define custom masculine colorscale to give each column its own tone/hue
+    # Column 0 (z: 0 to 1) -> Midnight/Navy Blue
+    # Column 1 (z: 2 to 3) -> Steel/Charcoal Gray
+    # Column 2 (z: 4 to 5) -> Petroleum/Deep Teal
     column_colorscale = [
-        # Column 0: Indigo/Blue [0.0, 0.2]
-        [0.0, "#EEF2F6"],
-        [0.02, "#E0E7FF"],
-        [0.2, "#4338CA"],
+        # Column 0: Navy Blue [0.0, 0.2]
+        [0.0, "#F8FAFC"],
+        [0.02, "#93C5FD"],
+        [0.2, "#1E3A8A"],
         
         # Gap
         [0.21, "#FFFFFF"],
         [0.39, "#FFFFFF"],
         
-        # Column 1: Purple [0.4, 0.6]
-        [0.4, "#F5F3FF"],
-        [0.42, "#F3E8FF"],
-        [0.6, "#6D28D9"],
+        # Column 1: Steel/Charcoal Gray [0.4, 0.6]
+        [0.4, "#F8FAFC"],
+        [0.42, "#94A3B8"],
+        [0.6, "#334155"],
         
         # Gap
         [0.61, "#FFFFFF"],
         [0.79, "#FFFFFF"],
         
-        # Column 2: Emerald/Teal [0.8, 1.0]
-        [0.8, "#ECFDF5"],
-        [0.82, "#D1FAE5"],
-        [1.0, "#047857"]
+        # Column 2: Petroleum/Deep Teal [0.8, 1.0]
+        [0.8, "#F0FDFA"],
+        [0.82, "#5EEAD4"],
+        [1.0, "#0F766E"]
     ]
     
     # Create the heatmap
