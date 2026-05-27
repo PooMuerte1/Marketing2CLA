@@ -855,20 +855,46 @@ with tab6:
     cat_texts = np.empty((len(lca_existing), len(rfm_existing)), dtype=object)
     cat_ids = np.zeros((len(lca_existing), len(rfm_existing)))
     
+    # Pass 1: Collect first category percentages for normalization per row (LCA class)
+    row_pcts = {}
     for r_idx, lca_name in enumerate(lca_existing):
+        row_pcts[r_idx] = []
         for c_idx, rfm_name in enumerate(rfm_existing):
             sub = filtered_df[(filtered_df['Cluster_LCA_Nombre'] == lca_name) & (filtered_df['Cluster_RFM_Nombre'] == rfm_name)]
             if len(sub) > 0:
-                # Color by column index (c_idx) and row index (r_idx) to differentiate columns using different tones of masculine light blues
-                cat_ids[r_idx, c_idx] = c_idx * 0.4 + r_idx * 0.1
-                
-                # Calculate Top 3 categories
                 cat_counts = sub['preferred_category'].value_counts(normalize=True) * 100
-                top3 = cat_counts.head(3)
+                if len(cat_counts) > 0:
+                    row_pcts[r_idx].append(cat_counts.iloc[0])
+                else:
+                    row_pcts[r_idx].append(0)
+            else:
+                row_pcts[r_idx].append(0)
+
+    # Pass 2: Calculate and assign z values so cells with the same category (by row) have the same color family but different shades
+    for r_idx, lca_name in enumerate(lca_existing):
+        vals = row_pcts[r_idx]
+        min_v = min(vals) if len(vals) > 0 else 0
+        max_v = max(vals) if len(vals) > 0 else 0
+        v_range = max_v - min_v
+        
+        for c_idx, rfm_name in enumerate(rfm_existing):
+            sub = filtered_df[(filtered_df['Cluster_LCA_Nombre'] == lca_name) & (filtered_df['Cluster_RFM_Nombre'] == rfm_name)]
+            if len(sub) > 0:
+                cat_counts = sub['preferred_category'].value_counts(normalize=True) * 100
+                p = cat_counts.iloc[0] if len(cat_counts) > 0 else 0
                 
+                # Normalize percentage within the row (LCA class)
+                norm_p = (p - min_v) / v_range if v_range > 0 else 0.5
+                
+                # Map to its respective row range to ensure same color family per category/row with different shades:
+                # Row 0 (Kitchen): Slate Grey-Blue (0.0 to 0.2)
+                # Row 1 (Apparel): Indigo Blue (0.4 to 0.6)
+                # Row 2 (Electronics): Sky Blue (0.8 to 1.0)
+                cat_ids[r_idx, c_idx] = r_idx * 0.4 + norm_p * 0.2
+                
+                top3 = cat_counts.head(3)
                 top3_lines = []
                 for rank, (cat, val) in enumerate(top3.items()):
-                    # Shorten category names to fit beautifully inside the heatmap cell
                     disp_cat = cat.replace("Clothing & ", "").replace("Toys & ", "").replace("Home & ", "").replace("Beauty & ", "").replace("Travel & ", "").replace("Jewelry & ", "").replace("Health & ", "").replace("Pet ", "").replace("Office ", "").replace("Sports & ", "")
                     top3_lines.append(f"{rank+1}. {disp_cat} ({val:.1f}%)")
                 
@@ -878,21 +904,21 @@ with tab6:
                 cat_ids[r_idx, c_idx] = -1
                 
     # Masculine light/clear colorscale (different tones/shades of the blue/slate family)
-    # Column 0: Light Sky Blue tones (0.0 to 0.2)
-    # Column 1: Light Indigo/Steel Blue tones (0.4 to 0.6)
-    # Column 2: Light Slate/Navy Blue tones (0.8 to 1.0)
+    # Row 0 (Kitchen/Home): Slate Grey-Blue tones (0.0 to 0.2)
+    # Row 1 (Apparel/Ropa): Indigo Blue tones (0.4 to 0.6)
+    # Row 2 (Electronics): Sky Blue tones (0.8 to 1.0)
     masculine_colorscale = [
-        [0.0, '#E0F2FE'],  # Sky blue 100
-        [0.1, '#BAE6FD'],  # Sky blue 200
-        [0.2, '#7DD3FC'],  # Sky blue 300
+        [0.0, '#F1F5F9'],  # Slate 50 (lightest)
+        [0.1, '#E2E8F0'],  # Slate 100
+        [0.2, '#CBD5E1'],  # Slate 200 (strongest)
         
-        [0.4, '#E0E7FF'],  # Indigo blue 100
-        [0.5, '#C7D2FE'],  # Indigo blue 200
-        [0.6, '#A5B4FC'],  # Indigo blue 300
+        [0.4, '#EEF2FF'],  # Indigo 50 (lightest)
+        [0.5, '#C7D2FE'],  # Indigo 200
+        [0.6, '#A5B4FC'],  # Indigo 300 (strongest)
         
-        [0.8, '#F1F5F9'],  # Slate 50
-        [0.9, '#E2E8F0'],  # Slate 100
-        [1.0, '#CBD5E1']   # Slate 200
+        [0.8, '#F0F9FF'],  # Sky 50 (lightest)
+        [0.9, '#BAE6FD'],  # Sky 200
+        [1.0, '#7DD3FC']   # Sky 300 (strongest)
     ]
 
     # Create the heatmap
