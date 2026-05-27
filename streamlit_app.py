@@ -639,7 +639,9 @@ with tab4:
         st.write("### Perfil del Sub-segmento Seleccionado")
         
         sel_rfm = st.selectbox("Seleccionar Segmento RFM", options=sorted(filtered_df['Cluster_RFM_Nombre'].unique()))
-        sel_lca = st.selectbox("Seleccionar Clase LCA", options=sorted(filtered_df['Cluster_LCA_Nombre'].unique()))
+        _lca_opts = sorted(filtered_df['Cluster_LCA_Nombre'].unique())
+        _lca_default = next((i for i, o in enumerate(_lca_opts) if 'LCA 2' in o), 0)
+        sel_lca = st.selectbox("Seleccionar Clase LCA", options=_lca_opts, index=_lca_default)
         
         sub = filtered_df[(filtered_df['Cluster_RFM_Nombre'] == sel_rfm) & (filtered_df['Cluster_LCA_Nombre'] == sel_lca)]
         
