@@ -693,36 +693,6 @@ with tab5:
     Para responder al requerimiento de la empresa, analizamos la **sensibilidad a las promociones** calculando el **Discount Ratio** (proporción de compras realizadas con descuentos) y la tasa de suscripción al **Newsletter** (nuestro principal canal de contacto promocional).
     """)
     
-    c_p1, c_p2 = st.columns(2)
-    
-    with c_p1:
-        # Discount ratio by RFM
-        promo_rfm = filtered_df.groupby('Cluster_RFM_Nombre')['discount_ratio'].mean().reset_index()
-        fig_promo_rfm = px.bar(
-            promo_rfm,
-            x="Cluster_RFM_Nombre",
-            y="discount_ratio",
-            color="Cluster_RFM_Nombre",
-            title="Proporción de Compras con Descuento por Segmento RFM",
-            color_discrete_sequence=px.colors.qualitative.Vivid
-        )
-        fig_promo_rfm.update_layout(template='plotly_white')
-        st.plotly_chart(fig_promo_rfm, use_container_width=True)
-        
-    with c_p2:
-        # Discount ratio by LCA
-        promo_lca = filtered_df.groupby('Cluster_LCA_Nombre')['discount_ratio'].mean().reset_index()
-        fig_promo_lca = px.bar(
-            promo_lca,
-            x="Cluster_LCA_Nombre",
-            y="discount_ratio",
-            color="Cluster_LCA_Nombre",
-            title="Proporción de Compras con Descuento por Clase LCA",
-            color_discrete_sequence=px.colors.qualitative.Vivid
-        )
-        fig_promo_lca.update_layout(template='plotly_white')
-        st.plotly_chart(fig_promo_lca, use_container_width=True)
-        
     st.subheader("Cruce de Sensibilidad a Promociones (Matriz Crossover de Descuento)")
     
     # Calculate discount ratio across the crossover grid
@@ -774,6 +744,38 @@ with tab5:
         3.  **Insensibilidad al Margen Tradicional (Orgánicas)**: Este grupo fue adquirido mayoritariamente mediante Búsqueda Orgánica y tiene una sensibilidad promocional extremadamente baja (Discount Ratio: **<5%**). Esto indica que valoran la exclusividad, la calidad del producto y el servicio premium por sobre los descuentos directos, lo cual permite retenerlas **sin erosionar nuestros márgenes con rebajas agresivas**.
         4.  **Afinidad de Categoría**: Su preferencia absoluta es **Electronics**. Al ser electrónica una categoría de alto valor unitario, las tácticas recomendadas deben enfocarse en garantías extendidas gratuitas, acceso prioritario a lanzamientos y soporte premium dedicado.
         """)
+        
+    # Individual Promotional Receptivity Charts below the heatmap
+    st.markdown('<div class="section-header">📊 Desglose de Receptividad Promocional Individual (LCA y RFM)</div>', unsafe_allow_html=True)
+    c_p1, c_p2 = st.columns(2)
+    
+    with c_p1:
+        # Discount ratio by RFM
+        promo_rfm = filtered_df.groupby('Cluster_RFM_Nombre')['discount_ratio'].mean().reset_index()
+        fig_promo_rfm = px.bar(
+            promo_rfm,
+            x="Cluster_RFM_Nombre",
+            y="discount_ratio",
+            color="Cluster_RFM_Nombre",
+            title="Proporción de Compras con Descuento por Segmento RFM",
+            color_discrete_sequence=px.colors.qualitative.Vivid
+        )
+        fig_promo_rfm.update_layout(template='plotly_white')
+        st.plotly_chart(fig_promo_rfm, use_container_width=True)
+        
+    with c_p2:
+        # Discount ratio by LCA
+        promo_lca = filtered_df.groupby('Cluster_LCA_Nombre')['discount_ratio'].mean().reset_index()
+        fig_promo_lca = px.bar(
+            promo_lca,
+            x="Cluster_LCA_Nombre",
+            y="discount_ratio",
+            color="Cluster_LCA_Nombre",
+            title="Proporción de Compras con Descuento por Clase LCA",
+            color_discrete_sequence=px.colors.qualitative.Vivid
+        )
+        fig_promo_lca.update_layout(template='plotly_white')
+        st.plotly_chart(fig_promo_lca, use_container_width=True)
         
 
     st.markdown('<div class="section-header">🎯 Conclusiones Estratégicas Generales y Recomendaciones</div>', unsafe_allow_html=True)
