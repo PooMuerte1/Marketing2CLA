@@ -631,8 +631,7 @@ with tab4:
             xaxis_title="Eje X: Segmento RFM (K-Means)",
             yaxis_title="Eje Y: Clase Demográfica (LCA)",
             margin=dict(l=0, r=0, b=0, t=40),
-            height=400,
-            yaxis=dict(autorange='reversed')
+            height=400
         )
         st.plotly_chart(fig_cross, use_container_width=True)
         
@@ -741,8 +740,7 @@ with tab5:
             xaxis_title="Segmento RFM (K-Means)",
             yaxis_title="Clase Demográfica (LCA)",
             margin=dict(l=0, r=0, b=0, t=40),
-            height=400,
-            yaxis=dict(autorange='reversed')
+            height=400
         )
         st.plotly_chart(fig_cross_promo, use_container_width=True)
         
@@ -883,8 +881,7 @@ with tab6:
         yaxis_title="Eje Y: Clase Demográfica (LCA)",
         margin=dict(l=0, r=0, b=0, t=40),
         height=380,
-        template='plotly_white',
-        yaxis=dict(autorange='reversed')
+        template='plotly_white'
     )
     
     st.plotly_chart(fig_cat_cross, use_container_width=True)
@@ -1021,8 +1018,7 @@ with tab7:
         yaxis_title="Eje Y: Clase Demográfica (LCA)",
         margin=dict(l=0, r=0, b=0, t=40),
         height=380,
-        template='plotly_white',
-        yaxis=dict(autorange='reversed')
+        template='plotly_white'
     )
     
     st.plotly_chart(fig_cross_churn, use_container_width=True)
