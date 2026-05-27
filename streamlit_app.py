@@ -908,17 +908,17 @@ with tab6:
     # Row 1 (Apparel/Ropa): Indigo Blue tones (0.4 to 0.6)
     # Row 2 (Electronics): Sky Blue tones (0.8 to 1.0)
     masculine_colorscale = [
-        [0.0, '#F1F5F9'],  # Slate 50 (lightest)
-        [0.1, '#E2E8F0'],  # Slate 100
-        [0.2, '#CBD5E1'],  # Slate 200 (strongest)
+        [0.0, '#E2E8F0'],  # Slate 100 (lightest, very soft slate grey-blue)
+        [0.1, '#CBD5E1'],  # Slate 200 (medium, clear slate grey-blue)
+        [0.2, '#94A3B8'],  # Slate 400 (strongest, visible grey-blue but not dark)
         
-        [0.4, '#EEF2FF'],  # Indigo 50 (lightest)
-        [0.5, '#C7D2FE'],  # Indigo 200
-        [0.6, '#A5B4FC'],  # Indigo 300 (strongest)
+        [0.4, '#C7D2FE'],  # Indigo 200 (lightest, very soft steel/indigo blue)
+        [0.5, '#A5B4FC'],  # Indigo 300 (medium, clear steel/indigo blue)
+        [0.6, '#818CF8'],  # Indigo 400 (strongest, visible steel/indigo blue but not dark)
         
-        [0.8, '#F0F9FF'],  # Sky 50 (lightest)
-        [0.9, '#BAE6FD'],  # Sky 200
-        [1.0, '#7DD3FC']   # Sky 300 (strongest)
+        [0.8, '#BAE6FD'],  # Sky 200 (lightest, very soft sky blue)
+        [0.9, '#7DD3FC'],  # Sky 300 (medium, clear sky blue)
+        [1.0, '#38BDF8']   # Sky 400 (strongest, visible sky blue but not dark)
     ]
 
     # Create the heatmap
