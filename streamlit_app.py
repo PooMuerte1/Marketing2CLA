@@ -518,46 +518,6 @@ with tab3:
             )
             st.plotly_chart(fig_v, use_container_width=True)
             
-    st.write("### 🌡️ Mapa de Calor de Probabilidades Condicionales P(Categoría | Clase)")
-    st.write("Este mapa de calor presenta la probabilidad condicional de que un miembro de una clase posea una característica determinada ($P(\\text{categoría} | \\text{clase})$). Las celdas con colores oscuros indican los rasgos identitarios de cada clase latente, permitiendo comparar los perfiles completos a simple vista:")
-    
-    cond_probs = []
-    for col in CAT_COLS:
-        for c_val in range(3):
-            c_name = f"Clase LCA {c_val}"
-            mask = filtered_df['Cluster_LCA'] == c_val
-            if mask.sum() > 0:
-                vc = filtered_df.loc[mask, col].value_counts(normalize=True)
-                for cat, prob in vc.items():
-                    cond_probs.append({
-                        'Variable': col,
-                        'Categoría': f"{col.upper()}: {cat}",
-                        'Clase': c_name,
-                        'Probabilidad': prob
-                    })
-                    
-    if cond_probs:
-        df_cond_p = pd.DataFrame(cond_probs)
-        df_cond_pivot = df_cond_p.pivot(index='Categoría', columns='Clase', values='Probabilidad').fillna(0)
-        
-        fig_h = go.Figure(data=go.Heatmap(
-            z=df_cond_pivot.values,
-            x=df_cond_pivot.columns,
-            y=df_cond_pivot.index,
-            colorscale='Blues',
-            text=[[f"{val:.1%}" for val in row] for row in df_cond_pivot.values],
-            texttemplate="%{text}",
-            hoverinfo="z"
-        ))
-        fig_h.update_layout(
-            height=500,
-            margin=dict(l=150, r=20, t=20, b=20),
-            xaxis_title="Clase Latente Sociodemográfica (LCA)",
-            yaxis_title="Características (Variable: Categoría)",
-            template='plotly_white'
-        )
-        st.plotly_chart(fig_h, use_container_width=True)
-
     # Radar de ADN a ancho completo en Tab 3
     st.markdown('<div class="section-header">🕸️ Radar de ADN: Perfil Multidimensional de las Clases Latentes</div>', unsafe_allow_html=True)
     st.write("El gráfico de radar permite comparar de manera simultánea el 'ADN' cualitativo de las tres clases latentes a lo largo de 5 dimensiones estratégicas de perfil. La forma y tamaño de los polígonos revela de un vistazo los rasgos identitarios de cada segmento meta de mercado:")
@@ -1518,6 +1478,49 @@ with tab9:
         """)
 
     with sub_anexo3:
+        # ── Mapa de Calor de Probabilidades Condicionales (movido a Anexos) ──
+        st.markdown('<div class="section-header">🌡️ Mapa de Calor de Probabilidades Condicionales P(Categoría | Clase)</div>', unsafe_allow_html=True)
+        st.write("Este mapa de calor presenta la probabilidad condicional de que un miembro de una clase posea una característica determinada ($P(\\text{categoría} | \\text{clase})$). Las celdas con colores oscuros indican los rasgos identitarios de cada clase latente, permitiendo comparar los perfiles completos a simple vista:")
+        
+        cond_probs_anexo = []
+        for col in CAT_COLS:
+            for c_val in range(3):
+                c_name = f"Clase LCA {c_val}"
+                mask = filtered_df['Cluster_LCA'] == c_val
+                if mask.sum() > 0:
+                    vc = filtered_df.loc[mask, col].value_counts(normalize=True)
+                    for cat, prob in vc.items():
+                        cond_probs_anexo.append({
+                            'Variable': col,
+                            'Categoría': f"{col.upper()}: {cat}",
+                            'Clase': c_name,
+                            'Probabilidad': prob
+                        })
+                        
+        if cond_probs_anexo:
+            df_cond_p_a = pd.DataFrame(cond_probs_anexo)
+            df_cond_pivot_a = df_cond_p_a.pivot(index='Categoría', columns='Clase', values='Probabilidad').fillna(0)
+            
+            fig_h_a = go.Figure(data=go.Heatmap(
+                z=df_cond_pivot_a.values,
+                x=df_cond_pivot_a.columns,
+                y=df_cond_pivot_a.index,
+                colorscale='Blues',
+                text=[[f"{val:.1%}" for val in row] for row in df_cond_pivot_a.values],
+                texttemplate="%{text}",
+                hoverinfo="z"
+            ))
+            fig_h_a.update_layout(
+                height=550,
+                margin=dict(l=160, r=20, t=20, b=20),
+                xaxis_title="Clase Latente Sociodemográfica (LCA)",
+                yaxis_title="Características (Variable: Categoría)",
+                template='plotly_white'
+            )
+            st.plotly_chart(fig_h_a, use_container_width=True)
+        
+        st.markdown("---")
+
         st.markdown('<div class="section-header">🎯 Ajuste y Selección de K: Barrido de Modelos LCA (AIC, BIC, Entropía)</div>', unsafe_allow_html=True)
         st.write("Graficamos la evolución del BIC, AIC y Entropía Normalizada en un barrido de clases para justificar matemáticamente que **K=3 es el óptimo balanceado** para el modelo sociodemográfico (LCA):")
 
