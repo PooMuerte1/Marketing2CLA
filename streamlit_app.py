@@ -776,59 +776,34 @@ with tab5:
         """)
         
 
-    # Option 1: Commercial Playbook Table
-    st.markdown('<div class="section-header">📋 Playbook de Acciones Comerciales y Estratégicas por Clase</div>', unsafe_allow_html=True)
-    st.write("El siguiente cuadro ejecutivo consolida la **táctica de mercadeo específica** recomendada para cada uno de los tres perfiles sociodemográficos identificados por el modelo LCA, optimizando la asignación de presupuestos y maximizando la retención:")
-    
-    playbook_data = {
-        'Clase Sociodemográfica': [
-            'Clase LCA 0: Hombres Jóvenes (Redes, Hogar)',
-            'Clase LCA 1: Adultos (Búsqueda Orgánica, Ropa)',
-            'Clase LCA 2: Mujeres (Búsqueda Orgánica, Electrónica)'
-        ],
-        'Propuesta de Valor': [
-            'Precios dinámicos y conveniencia inmediata',
-            'Catálogo exclusivo y novedades de temporada',
-            'Garantía de calidad y servicio premium'
-        ],
-        'Canal & Dispositivo Foco': [
-            'Redes Sociales (Mobile)',
-            'Búsqueda Orgánica (Desktop)',
-            'Búsqueda Orgánica (Desktop / Mobile)'
-        ],
-        'Táctica Promocional': [
-            'Descuentos agresivos flash de fin de semana',
-            'Promociones de temporada o early-access',
-            'Estrategia de retención VIP no-monetaria (beneficios sin descuentos directos)'
-        ],
-        'Siguiente Acción (Next Best Action)': [
-            'Disparar alertas push en Home & Kitchen',
-            'Enviar boletín de modas vía newsletter',
-            'Recuperación VIP: Soporte preferente, envíos express gratis y soporte premium dedicado'
-        ]
-    }
-    st.table(pd.DataFrame(playbook_data))
-
     st.markdown('<div class="section-header">🎯 Conclusiones Estratégicas Generales y Recomendaciones</div>', unsafe_allow_html=True)
     c_rec1, c_rec2 = st.columns(2)
     
     with c_rec1:
-        st.markdown('<div class="card" style="border-left: 5px solid #6366F1; min-height: 250px;">', unsafe_allow_html=True)
-        st.write("### 📢 Segmentación Quirúrgica en Promociones")
-        st.write("""
-        - **Protección Absoluta de Margen**: No diluir márgenes ofreciendo cupones masivos a los VIPs activos (`KM_1` / `LCA_2`), quienes compran de forma orgánica y con una sensibilidad al precio extremadamente baja.
-        - **Direccionamiento de Descuentos**: Canalizar las ofertas flash agresivas y campañas de descuento únicamente hacia el segmento altamente elástico de reactivación (**Clase K-Means 2 × Clase LCA 0 - Dormidos e impulsados por precio**), donde la elasticidad responde positivamente.
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="card" style="border-left: 5px solid #6366F1; min-height: 230px; padding: 1.5rem; border-radius: 10px; background-color: #1E293B; color: #F8FAFC; margin-bottom: 1rem;">
+            <h3 style="color: #6366F1; margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; font-family: inherit;">
+                📢 Segmentación Quirúrgica en Promociones
+            </h3>
+            <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.9rem; line-height: 1.5; color: #F8FAFC;">
+                <li style="margin-bottom: 0.5rem;"><strong>Protección Absoluta de Margen</strong>: No diluir márgenes ofreciendo cupones masivos a los VIPs activos (<code style="background: #0f172a; padding: 2px 4px; border-radius: 4px; color: #10b981; font-family: monospace;">KM_1</code> / <code style="background: #0f172a; padding: 2px 4px; border-radius: 4px; color: #10b981; font-family: monospace;">LCA_2</code>), quienes compran de forma orgánica y con una sensibilidad al precio extremadamente baja.</li>
+                <li><strong>Direccionamiento de Descuentos</strong>: Canalizar las ofertas flash agresivas y campañas de descuento únicamente hacia el segmento altamente elástico de reactivación (<strong>Clase K-Means 2 × Clase LCA 0 - Dormidos e impulsados por precio</strong>), donde la elasticidad responde positivamente.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
         
     with c_rec2:
-        st.markdown('<div class="card" style="border-left: 5px solid #8B5CF6; min-height: 250px;">', unsafe_allow_html=True)
-        st.write("### 🎯 Crecimiento en el Mercado Meta")
-        st.write("""
-        - **Recuperación VIP Quirúrgica**: Para capturar y retener a las **Mujeres VIP en Riesgo (LCA 2 × KM 0)**, se implementará un playbook de recuperación VIP mediante un programa de fidelidad de alto nivel.
-        - **Incentivos No Monetarios**: Priorizar el soporte prioritario, acceso anticipado y muestras exclusivas en su categoría preferida (**Electronics**) antes que recurrir a rebajas directas de precio.
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="card" style="border-left: 5px solid #8B5CF6; min-height: 230px; padding: 1.5rem; border-radius: 10px; background-color: #1E293B; color: #F8FAFC; margin-bottom: 1rem;">
+            <h3 style="color: #8B5CF6; margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; font-family: inherit;">
+                🎯 Crecimiento en el Mercado Meta
+            </h3>
+            <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.9rem; line-height: 1.5; color: #F8FAFC;">
+                <li style="margin-bottom: 0.5rem;"><strong>Recuperación VIP Quirúrgica</strong>: Para capturar y retener a las <strong>Mujeres VIP en Riesgo (LCA 2 × KM 0)</strong>, se implementará un playbook de recuperación VIP mediante un programa de fidelidad de alto nivel.</li>
+                <li><strong>Incentivos No Monetarios</strong>: Priorizar el soporte prioritario, acceso anticipado y muestras exclusivas en su categoría preferida (<strong>Electronics</strong>) antes que recurrir a rebajas directas de precio.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ==========================================
 # TAB 6: CATEGORÍAS POR SEGMENTO
