@@ -492,9 +492,9 @@ with tab3:
         with target_col:
             st.markdown(f"**{friendly_name}**")
 
-            # For preferred_category: top 3 per LCA class → union → rest = "Otras"
+            # For preferred_category: top 3 per LCA class independently -> rest = "Otras"
             if col_name == 'preferred_category':
-                _top3_per_class = set()
+                top3_map = {}
                 for _cls in filtered_df['Cluster_LCA_Nombre'].unique():
                     _cls_top3 = (
                         filtered_df[filtered_df['Cluster_LCA_Nombre'] == _cls]['preferred_category']
@@ -502,10 +502,11 @@ with tab3:
                         .head(3)
                         .index.tolist()
                     )
-                    _top3_per_class.update(_cls_top3)
+                    top3_map[_cls] = _cls_top3
                 plot_df = filtered_df.copy()
-                plot_df[col_name] = plot_df[col_name].apply(
-                    lambda x: x if x in _top3_per_class else 'Otras'
+                plot_df[col_name] = plot_df.apply(
+                    lambda row: row['preferred_category'] if row['preferred_category'] in top3_map.get(row['Cluster_LCA_Nombre'], []) else 'Otras',
+                    axis=1
                 )
             else:
                 plot_df = filtered_df
