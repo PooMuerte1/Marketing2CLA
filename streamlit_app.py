@@ -188,15 +188,15 @@ if filtered_df.empty:
 
 # --- TABS ---
 tab1, tab2, tab3, tab4, tab6, tab7, tab5, tab8, tab9 = st.tabs([
-    "📋 Contexto y Limpieza",
-    "📈 Segmentación RFM (K-Means)",
-    "👥 Segmentación Sociodemográfica (LCA)",
-    "🎯 Matriz de Crossover",
-    "🛍️ Categorías por Segmento",
-    "⚠️ Pérdida de Membresías (Churn)",
-    "🎁 Estrategia de Promociones",
-    "🧮 Simulador de ROI",
-    "📚 Anexos"
+    "Contexto y Limpieza",
+    "Segmentación RFM (K-Means)",
+    "Segmentación Sociodemográfica (LCA)",
+    "Matriz de Crossover",
+    "Categorías por Segmento",
+    "Pérdida de Membresías (Churn)",
+    "Estrategia de Promociones",
+    "Simulador de ROI",
+    "Anexos"
 ])
 
 # ==========================================
@@ -221,7 +221,7 @@ with tab1:
     - `customers.csv`: Registro de 8,000 perfiles de clientes.
     - `orders.csv`: Registro transaccional de pedidos de clientes.
     
-    El cliente está particularmente interesado en **identificar los segmentos de mercado que son más receptivos a las promociones**, considerando la categoría de producto (`preferred_category`), con el fin de ingresar al mercado de manera competitiva.
+    Se busca identificar los segmentos de mercado más receptivos a promociones teniendo en cuenta la categoría de compra preferida.
     """)
     
     st.markdown("""
@@ -263,7 +263,7 @@ with tab2:
     st.dataframe(rfm_summary)
 
     # 2. HERO VISUALIZATIONS SECTION
-    st.markdown('<div class="section-header">🌌 Las Joyas del Modelo: Separación Geométrica de Clusters</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Representación de cluster</div>', unsafe_allow_html=True)
     st.write("A continuación se presentan las visualizaciones de alto nivel del modelo de segmentación transaccional. Estas proyecciones permiten identificar con total precisión y rigor comercial la distribución geométrica de los grupos de valor. Puedes elegir visualizar los datos en escala **Estandarizada** (Log + Z-Score, que muestra la **máxima nitidez y separación de clusters**) o en escala **Real** (los datos comerciales brutos, comprimidos por el sesgo del gasto):")
     
     scale_choice = st.radio(
@@ -329,7 +329,7 @@ with tab2:
         st.plotly_chart(fig_3d_rfm, use_container_width=True)
 
     # 3. DISCRETIZED BAR CHARTS SECTION
-    st.markdown('<div class="section-header">🧬 Perfiles RFM Discretizados: Composición Porcentual Categórica</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Perfiles RFM Discretizados: Composición Porcentual Categórica</div>', unsafe_allow_html=True)
     st.write("Para entender de manera intuitiva el comportamiento comercial de los clusters, analizamos la composición de cada grupo en base a los rangos categóricos comerciales reales definidos por el negocio:")
     
     col_d1, col_d2, col_d3 = st.columns(3)
@@ -389,13 +389,13 @@ with tab2:
         st.plotly_chart(fig_mon, use_container_width=True)
 
     # 4. THREE FACES SECTION
-    st.markdown('<div class="section-header">🔍 Las 3 Caras del Modelo RFM (Datos Originales y Estandarizados)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Las 3 Caras del Modelo RFM (Datos Originales y Estandarizados)</div>', unsafe_allow_html=True)
     st.write("El siguiente análisis detalla las proyecciones bidimensionales cruzadas (Recencia, Frecuencia y Monetario) del espacio de clientes en sus escalas correspondientes:")
     
     sub_tab1, sub_tab2, sub_tab3 = st.tabs([
-        "📅 Recencia vs Frecuencia",
-        "📈 Frecuencia vs Gasto (Monetario)",
-        "⏳ Recencia vs Gasto (Monetario)"
+        "Recencia vs Frecuencia",
+        "Frecuencia vs Gasto (Monetario)",
+        "Recencia vs Gasto (Monetario)"
     ])
     
     # Determine columns to plot based on toggle
@@ -477,7 +477,7 @@ with tab3:
     st.write("### Perfil de Clases Categóricas (Modas)")
     st.dataframe(lca_summary)
         
-    st.markdown('<div class="section-header">🧬 Perfil de ADN Completo: Distribución de Todas las Variables Categóricas</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Perfil de ADN Completo: Distribución de Todas las Variables Categóricas</div>', unsafe_allow_html=True)
     st.write("Para analizar simultáneamente **todas las variables discretizadas del modelo** sin ocultar información tras un selector, se presenta la composición porcentual de cada clase para las 7 variables sociodemográficas y de comportamiento:")
     
     col_a, col_b, col_c = st.columns(3)
@@ -543,7 +543,7 @@ with tab3:
             st.plotly_chart(fig_v, use_container_width=True)
 
     # Radar de ADN a ancho completo en Tab 3
-    st.markdown('<div class="section-header">🕸️ Radar de ADN: Perfil Multidimensional de las Clases Latentes</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">️ Radar de ADN: Perfil Multidimensional de las Clases Latentes</div>', unsafe_allow_html=True)
     st.write("El gráfico de radar permite comparar de manera simultánea el 'ADN' cualitativo de las tres clases latentes a lo largo de 5 dimensiones estratégicas de perfil. La forma y tamaño de los polígonos revela de un vistazo los rasgos identitarios de cada segmento meta de mercado:")
     
     # Calculate radar dimensions per class
@@ -746,7 +746,7 @@ with tab5:
         """)
         
     # Individual Promotional Receptivity Charts below the heatmap
-    st.markdown('<div class="section-header">📊 Desglose de Receptividad Promocional Individual (LCA y RFM)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Desglose de Receptividad Promocional Individual (LCA y RFM)</div>', unsafe_allow_html=True)
     c_p1, c_p2 = st.columns(2)
     
     with c_p1:
@@ -778,7 +778,7 @@ with tab5:
         st.plotly_chart(fig_promo_lca, use_container_width=True)
         
 
-    st.markdown('<div class="section-header">🎯 Conclusiones Estratégicas Generales y Recomendaciones</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Conclusiones Estratégicas Generales y Recomendaciones</div>', unsafe_allow_html=True)
     c_rec1, c_rec2 = st.columns(2)
     
     with c_rec1:
@@ -811,7 +811,7 @@ with tab5:
 # TAB 6: CATEGORÍAS POR SEGMENTO
 # ==========================================
 with tab6:
-    st.markdown('<div class="section-header">🛍️ Matriz de Crossover de Categorías de Producto Preferidas</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">️ Matriz de Crossover de Categorías de Producto Preferidas</div>', unsafe_allow_html=True)
     st.write("""
     Esta matriz de crossover avanzada cruza los tres perfiles transaccionales (K-Means) con las tres clases demográficas (LCA) para revelar la **Categoría de Producto Preferida** predominante y su porcentaje de concentración en cada micro-segmento de clientes activos. Esto permite orientar el inventario, el catálogo y las promociones con total precisión:
     """)
@@ -927,14 +927,14 @@ with tab6:
 # TAB 7: PÉRDIDA DE MEMBRESÍAS (CHURN)
 # ==========================================
 with tab7:
-    st.markdown('<div class="section-header">⚠️ Pérdida de Membresías (Análisis de Churn)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">️ Pérdida de Membresías (Análisis de Churn)</div>', unsafe_allow_html=True)
     st.write("""
     Para que las campañas de marketing digital y los esfuerzos de fidelización sean sostenibles, la empresa debe identificar y mitigar la **tasa de cancelación (Churn)** de membresías. 
     Este módulo analiza a los clientes que abandonaron la plataforma (**8.9% global / 715 clientes**) y establece las pautas estratégicas de retención antes de simular escenarios de campañas comerciales en el simulador de ROI.
     """)
     
     # Churn Crossover Matrix Heatmap
-    st.markdown('<div class="section-header">🎯 Matriz de Crossover de Fuga de Clientes (Tasa de Churn por Micro-segmento)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Matriz de Crossover de Fuga de Clientes (Tasa de Churn por Micro-segmento)</div>', unsafe_allow_html=True)
     st.write("""
     Esta matriz avanzada cruza los tres perfiles transaccionales (K-Means) con las tres clases demográficas (LCA) sobre la base completa de clientes para revelar la **Tasa de Abandono (Churn Rate %)** y la cantidad de cuentas canceladas en cada micro-segmento cruzado en tiempo real:
     """)
@@ -1061,7 +1061,7 @@ with tab7:
         st.plotly_chart(fig_tier_churn, use_container_width=True)
     
     # Second row: country / region analysis and age groups
-    st.markdown('<div class="section-header">🌍 Análisis Geográfico y Perfil de Fuga</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Análisis Geográfico y Perfil de Fuga</div>', unsafe_allow_html=True)
     col_ch3, col_ch4 = st.columns(2)
     
     with col_ch3:
@@ -1118,7 +1118,7 @@ with tab7:
         st.plotly_chart(fig_age_churn, use_container_width=True)
 
     # Playbook cards
-    st.markdown('<div class="section-header">🛡️ Playbook Estratégico para la Retención y Control de Churn</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">️ Playbook Estratégico para la Retención y Control de Churn</div>', unsafe_allow_html=True)
     c_ch_rec1, c_ch_rec2 = st.columns(2)
     
     with c_ch_rec1:
@@ -1156,7 +1156,7 @@ with tab8:
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown('<div class="section-header">🧮 Simulador Comercial de Campañas y Retorno de Inversión (ROI)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Simulador Comercial de Campañas y Retorno de Inversión (ROI)</div>', unsafe_allow_html=True)
     st.write("""
     Este simulador interactivo utiliza las **métricas empíricas reales** calculadas para cada micro-segmento cruzado en la matriz de crossover (su tamaño poblacional, gasto promedio y sensibilidad histórica a promociones `discount_ratio`) para modelar escenarios predictivos de campañas de marketing digital.
     """)
@@ -1249,7 +1249,7 @@ with tab8:
     roi_pct_incremental = (net_profit_incremental / effective_budget_used) * 100.0 if effective_budget_used > 0 else 0.0
     
     # 4. DISPLAY RESULTS
-    st.markdown('<div class="section-header">📈 Proyección de Métricas y Retorno Comercial</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Proyección de Métricas y Retorno Comercial</div>', unsafe_allow_html=True)
     
     eval_model = st.radio(
         "**Modelo de Evaluación Financiera de la Campaña**:",
@@ -1359,13 +1359,13 @@ with tab9:
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown('<div class="section-header">📚 Anexos Técnicos y Diagnósticos de Modelos</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Anexos Técnicos y Diagnósticos de Modelos</div>', unsafe_allow_html=True)
     st.write("Esta sección recopila todos los análisis de diagnóstico exploratorio, diagramas de outliers, transformaciones matemáticas, optimización del número de clusters, diagnósticos de verosimilitud y proyecciones de reducción de dimensionalidad implementadas en el pipeline de datos:")
 
     sub_anexo1, sub_anexo2, sub_anexo3 = st.tabs([
-        "📊 Exploración, Outliers y Limpieza",
-        "📈 Diagnósticos del Modelo RFM (LCA vs K-Means)",
-        "👥 Diagnósticos del Modelo Demográfico (LCA vs K-Means)"
+        "Exploración, Outliers y Limpieza",
+        "Diagnósticos del Modelo RFM (LCA vs K-Means)",
+        "Diagnósticos del Modelo Demográfico (LCA vs K-Means)"
     ])
 
     with sub_anexo1:
@@ -1443,7 +1443,7 @@ with tab9:
             st.plotly_chart(fig_pie2, use_container_width=True)
 
     with sub_anexo2:
-        st.markdown('<div class="section-header">🌐 Espacio Transaccional Original en 3D Interactivo</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Espacio Transaccional Original en 3D Interactivo</div>', unsafe_allow_html=True)
         st.write("Visualizamos la asignación tridimensional del modelo K-Means en las tres variables continuas originales de recencia, frecuencia y gasto:")
         
         fig_3d_rfm = px.scatter_3d(
@@ -1469,7 +1469,7 @@ with tab9:
         )
         st.plotly_chart(fig_3d_rfm, use_container_width=True)
 
-        st.markdown('<div class="section-header">⚙️ Ingeniería de Variables y Optimización de K (Codo)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">️ Ingeniería de Variables y Optimización de K (Codo)</div>', unsafe_allow_html=True)
         col_c1, col_c2 = st.columns(2)
         
         with col_c1:
@@ -1536,7 +1536,7 @@ with tab9:
             fig_elbow_rfm.update_layout(template='plotly_white', height=400, margin=dict(t=10, b=10, l=10, r=10))
             st.plotly_chart(fig_elbow_rfm, use_container_width=True)
 
-        st.markdown('<div class="section-header">🌌 Proyección PCA 2D: Estabilidad y Separación del Espacio K-Means</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Proyección PCA 2D: Estabilidad y Separación del Espacio K-Means</div>', unsafe_allow_html=True)
         st.write("Para certificar matemáticamente la calidad del agrupamiento K-Means ($K=3$), analizamos la separación en componentes principales (PCA). El gráfico de la izquierda muestra el espacio transformado (Log + Z-Score) donde las nubes son esféricas y compactas, mientras que el de la derecha muestra el espacio en bruto de Recencia vs Gasto USD, donde los outliers estiran el espacio y justifican plenamente por qué era necesaria la estandarización:")
         
         col_comp_rfm1, col_comp_rfm2 = st.columns(2)
@@ -1575,7 +1575,7 @@ with tab9:
             )
             st.plotly_chart(fig_raw_rfm_2d, use_container_width=True)
 
-        st.markdown('<div class="section-header">⚖️ Justificación Técnica y Matemática de K-Means en RFM</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">️ Justificación Técnica y Matemática de K-Means en RFM</div>', unsafe_allow_html=True)
         st.write("""
         Para variables transaccionales continuas y métricas comerciales directas, **K-Means** es la mejor elección metodológica debido a las siguientes razones de tu proyecto:
         - **Modelamiento de Distancia Continua**: Las variables de Recencia, Frecuencia y Gasto representan coordenadas métricas continuas. K-Means optimiza de forma directa la inercia (la varianza geométrica interna), agrupando a los clientes según proximidad en un espacio euclidiano real.
@@ -1585,7 +1585,7 @@ with tab9:
 
     with sub_anexo3:
         # ── Mapa de Calor de Probabilidades Condicionales (movido a Anexos) ──
-        st.markdown('<div class="section-header">🌡️ Mapa de Calor de Probabilidades Condicionales P(Categoría | Clase)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">️ Mapa de Calor de Probabilidades Condicionales P(Categoría | Clase)</div>', unsafe_allow_html=True)
         st.write("Este mapa de calor presenta la probabilidad condicional de que un miembro de una clase posea una característica determinada ($P(\\text{categoría} | \\text{clase})$). Las celdas con colores oscuros indican los rasgos identitarios de cada clase latente, permitiendo comparar los perfiles completos a simple vista:")
         
         cond_probs_anexo = []
@@ -1627,7 +1627,7 @@ with tab9:
         
         st.markdown("---")
 
-        st.markdown('<div class="section-header">🗺️ Mapa de Posicionamiento Estratégico LCA (Bubble Chart)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">️ Mapa de Posicionamiento Estratégico LCA (Bubble Chart)</div>', unsafe_allow_html=True)
         st.write("Cruzamos las dimensiones demográficas y de valor transaccional de los segmentos para crear un mapa de posicionamiento comercial estratégico. La **edad promedio** representa el eje X, el **gasto promedio** el eje Y, y el **tamaño de la burbuja** indica el volumen de clientes en cada segmento:")
         
         bubble_data_a = filtered_df.groupby('Cluster_LCA_Nombre').agg(
@@ -1659,7 +1659,7 @@ with tab9:
 
         st.markdown("---")
 
-        st.markdown('<div class="section-header">🎯 Ajuste y Selección de K: Barrido de Modelos LCA (AIC, BIC, Entropía)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Ajuste y Selección de K: Barrido de Modelos LCA (AIC, BIC, Entropía)</div>', unsafe_allow_html=True)
         st.write("Graficamos la evolución del BIC, AIC y Entropía Normalizada en un barrido de clases para justificar matemáticamente que **K=3 es el óptimo balanceado** para el modelo sociodemográfico (LCA):")
 
         # Barrido data matching original demografico notebook
@@ -1690,7 +1690,7 @@ with tab9:
             
         st.info("💡 **Justificación Científica del BIC**: El Criterio de Información Bayesiano (BIC) penaliza fuertemente el número de parámetros del modelo a medida que aumenta el tamaño de la muestra ($N=7,285$). Aunque el BIC continúa descendiendo levemente en $K=4$, la **Entropía Normalizada y la interpretabilidad comercial de negocio** señalan que $K=3$ es la separación óptima y con el tamaño mínimo de segmento más robusto (24.5%).")
 
-        st.markdown('<div class="section-header">🌡️ Perfil Numérico Normalizado de Clases LCA (Heatmap)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">️ Perfil Numérico Normalizado de Clases LCA (Heatmap)</div>', unsafe_allow_html=True)
         st.write("Visualizamos los promedios reales de las variables numéricas para cada clase latente demográfica en un heatmap normalizado para perfilar fortalezas y debilidades:")
 
         num_perfil = filtered_df.groupby('Cluster_LCA_Nombre').agg(
@@ -1722,7 +1722,7 @@ with tab9:
         )
         st.plotly_chart(fig_num_heat, use_container_width=True)
 
-        st.markdown('<div class="section-header">📉 Método del Codo para Modelo Sociodemográfico K-Means</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Método del Codo para Modelo Sociodemográfico K-Means</div>', unsafe_allow_html=True)
         st.write("Corremos el algoritmo K-Means en un barrido de $K=1..9$ sobre la matriz demográfica codificada para evaluar la inercia como contraste metodológico:")
 
         cols_socio_km = ['age_group', 'region', 'gender', 'membership_tier', 'preferred_device', 'acquisition_channel']
@@ -1743,7 +1743,7 @@ with tab9:
         fig_elbow_socio.update_layout(template='plotly_white')
         st.plotly_chart(fig_elbow_socio, use_container_width=True)
 
-        st.markdown('<div class="section-header">🌌 Proyección PCA 2D: Clases Sociodemográficas K-Means vs LCA</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Proyección PCA 2D: Clases Sociodemográficas K-Means vs LCA</div>', unsafe_allow_html=True)
         col_comp_socio1, col_comp_socio2 = st.columns(2)
         
         with col_comp_socio1:
@@ -1791,7 +1791,7 @@ with tab9:
             fig_pca_socio.update_layout(template='plotly_white')
             st.plotly_chart(fig_pca_socio, use_container_width=True)
 
-        st.markdown('<div class="section-header">🔗 Correspondencia y Acuerdo entre LCA y K-Means</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Correspondencia y Acuerdo entre LCA y K-Means</div>', unsafe_allow_html=True)
         st.write("Cruzamos las asignaciones del modelo probabilístico LCA y el modelo geométrico K-Means en una matriz de contingencia para entender de qué manera difieren sus clasificaciones en el espacio sociodemográfico:")
         
         filtered_df_copy = filtered_df.copy()
@@ -1820,7 +1820,7 @@ with tab9:
         )
         st.plotly_chart(fig_cross_heat, use_container_width=True)
 
-        st.markdown('<div class="section-header">🎯 Certeza de Asignación Probabilística (Diagnóstico LCA)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Certeza de Asignación Probabilística (Diagnóstico LCA)</div>', unsafe_allow_html=True)
         st.write("Evaluamos el rigor estadístico del modelo sociodemográfico (LCA) analizando la **certeza de asignación (probabilidad de membresía modal)** de los clientes a sus respectivas clases. Una concentración alta cerca del 100% indica que las poblaciones están óptimamente diferenciadas:")
         
         fig_diag = px.histogram(
@@ -1842,7 +1842,7 @@ with tab9:
         )
         st.plotly_chart(fig_diag, use_container_width=True)
 
-        st.markdown('<div class="section-header">📊 Calidad de Clustering en Categóricos: LCA vs K-Means</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Calidad de Clustering en Categóricos: LCA vs K-Means</div>', unsafe_allow_html=True)
         comp_data = {
             'Métrica': ['Silhouette Score ↑', 'Davies-Bouldin ↓', 'Calinski-Harabasz ↑', 'BIC (Bayesiano) ↓', 'Entropía ↑'],
             'K-Means (k=3)': ['0.1134', '2.7091', '575.86', 'N/A (No aplica)', 'N/A (No aplica)'],
