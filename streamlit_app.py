@@ -10,7 +10,7 @@ from sklearn.cluster import KMeans
 # --- PAGE SETUP ---
 st.set_page_config(
     page_title="Inteligencia de Clientes & Posicionamiento Comercial",
-    page_icon="🎯",
+    page_icon="bar_chart",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -169,7 +169,7 @@ st.markdown('<div class="main-title">Estrategia de Segmentación de Clientes y P
 st.markdown('<div class="subtitle">División de Growth Marketing & Business Analytics — Plataforma de Decisiones Estratégicas</div>', unsafe_allow_html=True)
 
 # --- GLOBAL FILTERS AT THE TOP ---
-with st.expander("🔍 Filtros Globales de Segmento (Región Geográfica y Nivel de Membresía)", expanded=False):
+with st.expander("Filtros Globales de Segmento (Región Geográfica y Nivel de Membresía)", expanded=False):
     col_f1, col_f2 = st.columns(2)
     with col_f1:
         region_filter = st.multiselect("Filtrar por Región Geográfica", options=sorted(df['region'].unique()), default=sorted(df['region'].unique()))
@@ -206,7 +206,7 @@ with tab1:
     if pitch_mode:
         st.markdown("""
         <div class="pitch-guide">
-            <strong>🎤 Guía para el Pitch (Minuto 0-2)</strong><br>
+            <strong>Guía para el Pitch (Minuto 0-2)</strong><br>
             • Preséntate y expón el objetivo: Segmentar la base de clientes de un gran E-commerce global para definir su mercado meta y la estrategia de posicionamiento para capturar promociones.<br>
             • Explica que trabajaron exclusivamente sobre la <strong>base activa (7,285 clientes)</strong> para optimizar el retorno de inversión comercial, descartando clientes fugados.
         </div>
@@ -241,7 +241,7 @@ with tab2:
     if pitch_mode:
         st.markdown("""
         <div class="pitch-guide">
-            <strong>🎤 Guía para el Pitch (Minuto 2-4)</strong><br>
+            <strong>Guía para el Pitch (Minuto 2-4)</strong><br>
             • Expón que realizaron un modelo de segmentación geométrica <strong>K-Means</strong> ($K=3$) sobre RFM. Justifica que para K-Means aplicaron una compresión logarítmica para mitigar outliers y estandarización Z-score previa sobre las variables continuas originales.<br>
             • Señala la <strong>Clase K-Means 1</strong> como tus clientes VIP activos y de más alto valor, la <strong>Clase K-Means 0</strong> como tus clientes de alto valor pero en riesgo de fuga (alta recencia), y la <strong>Clase K-Means 2</strong> como los de bajo valor e inactivos.
         </div>
@@ -249,7 +249,7 @@ with tab2:
 
     st.markdown('<div class="section-header">Modelo RFM: K-Means (K=3)</div>', unsafe_allow_html=True)
     
-    st.info("💡 **Justificación del Modelo**: Para segmentar los perfiles transaccionales RFM, se utilizó el algoritmo **K-Means** con $K=3$ sobre las variables continuas de Recencia, Frecuencia y Gasto. Estas fueron transformadas de forma logarítmica (para comprimir outliers) y estandarizadas con Z-Score (para normalizar las escalas). Esta segmentación geométrica agrupa de manera compacta y eficiente a los clientes según su valor comercial e inactividad en el espacio Euclidiano.")
+    st.info("**Justificación del Modelo**: Para segmentar los perfiles transaccionales RFM, se utilizó el algoritmo **K-Means** con $K=3$ sobre las variables continuas de Recencia, Frecuencia y Gasto. Estas fueron transformadas de forma logarítmica (para comprimir outliers) y estandarizadas con Z-Score (para normalizar las escalas). Esta segmentación geométrica agrupa de manera compacta y eficiente a los clientes según su valor comercial e inactividad en el espacio Euclidiano.")
     
     # RFM summary
     rfm_summary = filtered_df.groupby('Cluster_RFM_Nombre').agg(
@@ -451,7 +451,7 @@ with tab3:
     if pitch_mode:
         st.markdown("""
         <div class="pitch-guide">
-            <strong>🎤 Guía para el Pitch (Minuto 4-6)</strong><br>
+            <strong>Guía para el Pitch (Minuto 4-6)</strong><br>
             • Explica por qué LCA es el único modelo adecuado para perfiles categóricos (país, canal, dispositivo, género): la distancia euclidiana de K-Means carece de sentido sobre variablesdummies.<br>
             • Explica el <strong>Gráfico 3D de Espacio Demográfico (PCA 3D)</strong>: Usaron reducción de dimensionalidad (PCA 3D) para proyectar las 7 variables categóricas en el espacio y demostrar visualmente cómo StepMix logra separar perfectamente a las poblaciones.
         </div>
@@ -459,7 +459,7 @@ with tab3:
 
     st.markdown('<div class="section-header">Modelo Sociodemográfico: Latent Class Analysis (LCA - K=3)</div>', unsafe_allow_html=True)
     
-    st.info("💡 **Justificación del Modelo**: Para los datos demográficos y de canal se utiliza **LCA (Latent Class Analysis)** mediante `StepMix`. Las variables sociodemográficas son categóricas nominales (región, género, dispositivo, canal de adquisición, etc.). K-Means no es adecuado debido a que la distancia euclidiana pierde su significado físico sobre variables codificadas como dummy. LCA clasifica probabilísticamente usando distribuciones multinomiales nativas.")
+    st.info("**Justificación del Modelo**: Para los datos demográficos y de canal se utiliza **LCA (Latent Class Analysis)** mediante `StepMix`. Las variables sociodemográficas son categóricas nominales (región, género, dispositivo, canal de adquisición, etc.). K-Means no es adecuado debido a que la distancia euclidiana pierde su significado físico sobre variables codificadas como dummy. LCA clasifica probabilísticamente usando distribuciones multinomiales nativas.")
     
     # LCA summary
     # LCA summary (100% categorical - demographic variables only to maintain purity)
@@ -596,7 +596,7 @@ with tab4:
     if pitch_mode:
         st.markdown("""
         <div class="pitch-guide">
-            <strong>🎤 Guía para el Pitch (Minuto 6-8)</strong><br>
+            <strong>Guía para el Pitch (Minuto 6-8)</strong><br>
             • Muestra la <strong>Matriz de Crossover</strong> de poblaciones cruzadas de K-Means transaccional (RFM) y LCA demográfico.<br>
             • Explica que al cruzar la segmentación geométrica K-Means con el LCA demográfico probabilístico logramos identificar micro-segmentos de alto valor. Por ejemplo, selecciona una combinación en los selectores y muestra las estadísticas detalladas (ticket promedio, dispositivo) para demostrar cómo la empresa puede micro-segmentar con precisión quirúrgica.
         </div>
@@ -679,7 +679,7 @@ with tab5:
     if pitch_mode:
         st.markdown("""
         <div class="pitch-guide">
-            <strong>🎤 Guía para el Pitch (Minuto 8-10)</strong><br>
+            <strong>Guía para el Pitch (Minuto 8-10)</strong><br>
             • **El Cierre Fuerte**: Expón el análisis de receptividad a las promociones (Discount Ratio).<br>
             • Explica la revelación estratégica: La <strong>Clase K-Means 2 (Bajo Gasto)</strong> es sumamente sensible al precio (~39% de pedidos con descuento), mientras que la <strong>Clase K-Means 1 (VIP)</strong> compra de manera orgánica (~5% de descuento). ¡No devalúes tu margen regalando promociones a tus clientes más fieles!<br>
             • Da las recomendaciones de entrada al mercado: Campañas flash para la Clase K-Means 2 × Clase LCA 0 y posicionamiento premium basado en servicio y lealtad para la Clase K-Means 1.
@@ -785,7 +785,7 @@ with tab5:
         st.markdown("""
         <div class="card" style="border-left: 5px solid #6366F1; min-height: 230px; padding: 1.5rem; border-radius: 10px; background-color: #1E293B; color: #F8FAFC; margin-bottom: 1rem;">
             <h3 style="color: #6366F1; margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; font-family: inherit;">
-                📢 Segmentación Quirúrgica en Promociones
+                Segmentación Quirúrgica en Promociones
             </h3>
             <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.9rem; line-height: 1.5; color: #F8FAFC;">
                 <li style="margin-bottom: 0.5rem;"><strong>Protección Absoluta de Margen</strong>: No diluir márgenes ofreciendo cupones masivos a los VIPs activos (<code style="background: #0f172a; padding: 2px 4px; border-radius: 4px; color: #10b981; font-family: monospace;">KM_1</code> / <code style="background: #0f172a; padding: 2px 4px; border-radius: 4px; color: #10b981; font-family: monospace;">LCA_2</code>), quienes compran de forma orgánica y con una sensibilidad al precio extremadamente baja.</li>
@@ -798,7 +798,7 @@ with tab5:
         st.markdown("""
         <div class="card" style="border-left: 5px solid #8B5CF6; min-height: 230px; padding: 1.5rem; border-radius: 10px; background-color: #1E293B; color: #F8FAFC; margin-bottom: 1rem;">
             <h3 style="color: #8B5CF6; margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; font-family: inherit;">
-                🎯 Crecimiento en el Mercado Meta
+                Crecimiento en el Mercado Meta
             </h3>
             <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.9rem; line-height: 1.5; color: #F8FAFC;">
                 <li style="margin-bottom: 0.5rem;"><strong>Recuperación VIP Quirúrgica</strong>: Para capturar y retener a las <strong>Mujeres VIP en Riesgo (LCA 2 × KM 0)</strong>, se implementará un playbook de recuperación VIP mediante un programa de fidelidad de alto nivel.</li>
@@ -1123,7 +1123,7 @@ with tab7:
     
     with c_ch_rec1:
         st.markdown('<div class="card" style="border-left: 5px solid #EF4444;">', unsafe_allow_html=True)
-        st.write("### 🚨 Puntos Críticos Detectados (Zonas de Dolor)")
+        st.write("### Puntos Críticos Detectados (Zonas de Dolor)")
         st.write("""
         - **El Dilema de la Membresía Gold**: El nivel **Gold registra la mayor tasa de fuga (9.86%)** entre todos los niveles pagados, superando al nivel Free (9.52%). Esto indica que los clientes Gold no están percibiendo suficiente valor por su suscripción activa.
         - **Foco Geográfico de Riesgo**: **Turquía (13.16%)**, **Polonia (13.00%)**, **Sudáfrica (12.77%)** y **Japón (12.18%)** son focos rojos. La alta deserción en estos países sugiere problemas con la pasarela de pagos local o retrasos logísticos en envíos transfronterizos.
@@ -1133,7 +1133,7 @@ with tab7:
         
     with c_ch_rec2:
         st.markdown('<div class="card" style="border-left: 5px solid #10B981;">', unsafe_allow_html=True)
-        st.write("### 🛡️ Acciones de Mitigación Inmediata (Playbook de Growth)")
+        st.write("### Acciones de Mitigación Inmediata (Playbook de Growth)")
         st.write("""
         - **Rediseño de Beneficios Gold**: Aumentar la propuesta de valor de la membresía Gold agregando acceso anticipado a ofertas y atención prioritaria para detener la deserción.
         - **Optimización Logística y Localización**: Realizar una auditoría operativa profunda de envíos y logística de última milla en Turquía, Polonia y Japón para resolver problemas locales de entrega.
@@ -1150,7 +1150,7 @@ with tab8:
     if pitch_mode:
         st.markdown("""
         <div class="pitch-guide">
-            <strong>🎤 Guía para el Pitch (Minuto 10+) — BONUS DE VALOR COMERCIAL</strong><br>
+            <strong>Guía para el Pitch (Minuto 10+) — BONUS DE VALOR COMERCIAL</strong><br>
             • **El Cierre Ejecutivo**: Muestra a la Junta Directiva cómo los clusters no son solo teoría, sino que sirven para planificar presupuestos comerciales reales y predecir el ROI.<br>
             • Selecciona el micro-segmento estrella (ej: Clase K-Means 2 x Clase LCA 0) y simula una campaña con un descuento del 20%. Muestra cómo el ROI es altamente positivo debido a su sensibilidad al precio, mientras que si lo aplicas en el segmento VIP activo (Clase K-Means 1), ¡el ROI destruye valor debido a su bajísima sensibilidad promocional!
         </div>
@@ -1188,7 +1188,7 @@ with tab8:
     # Render segment stats card
     st.markdown(f"""
     <div class="card" style="border-left: 5px solid #F59E0B; margin-bottom: 1.5rem;">
-        <h4 style="margin-top:0;">📊 Perfil Base del Micro-segmento Objetivo</h4>
+        <h4 style="margin-top:0;">Perfil Base del Micro-segmento Objetivo</h4>
         • <strong>Tamaño de población activa (N)</strong>: {N_segment:,} clientes en la base de datos.<br>
         • <strong>Gasto Promedio por compra (Ticket)</strong>: ${avg_spend:,.2f} USD.<br>
         • <strong>Sensibilidad Promocional Histórica (Discount Ratio)</strong>: {emp_sensitivity*100:.1f}% (proporción de compras realizadas con descuento).
@@ -1255,7 +1255,7 @@ with tab8:
         "**Modelo de Evaluación Financiera de la Campaña**:",
         options=[
             "Retorno Total Atribuido (Tradicional: incluye ventas orgánicas e incrementales juntas)",
-            "Retorno Neto Incremental Avanzado (Recomendado: descuenta ventas orgánicas y resta costo de canibalización) 💡"
+            "Retorno Neto Incremental Avanzado (Recomendado: descuenta ventas orgánicas y resta costo de canibalización)"
         ],
         index=1,
         help="El modelo tradicional muestra todos los ingresos del grupo alcanzado, lo que puede sobreestimar el impacto. El modelo incremental aísla solo las ventas adicionales generadas directamente por la promoción y resta la canibalización de ventas orgánicas."
@@ -1329,21 +1329,21 @@ with tab8:
     with c_graph2:
         if display_roi > 20.0:
             st.success(f"""
-            ### 🟢 RECOMENDACIÓN: **EJECUTAR CAMPAÑA**
+            ### RECOMENDACIÓN: **EJECUTAR CAMPAÑA**
             - **ROI Altamente Rentable** ({display_roi:.1f}%). 
             - Este segmento responde de manera excelente a promociones y el ticket promedio absorbe con creces la pérdida de margen del descuento.
             - **Acción Táctica**: Lanzar campaña flash push móvil en la categoría prioritaria (**{sub_df['preferred_category'].mode()[0]}**) utilizando el canal prioritario (**{sub_df['acquisition_channel'].mode()[0]}**) los fines de semana.
             """)
         elif display_roi >= 0.0:
             st.warning(f"""
-            ### 🟡 RECOMENDACIÓN: **OPTIMIZAR CAMPAÑA**
+            ### RECOMENDACIÓN: **OPTIMIZAR CAMPAÑA**
             - **ROI Marginal** ({display_roi:.1f}%).
             - La campaña apenas logra cubrir los costos operativos e incentivos.
             - **Acción Táctica**: Reduce el incentivo al **{max(5.0, (discount_pct*100)-5):.0f}%** para proteger margen, u optimiza costes digitales de contactación usando canales orgánicos directos (ej. email marketing) para bajar el coste por Reach por debajo de **${cost_per_reach:.2f}**.
             """)
         else:
             st.error(f"""
-            ### 🔴 RECOMENDACIÓN: **CANCELAR / NO EJECUTAR**
+            ### RECOMENDACIÓN: **CANCELAR / NO EJECUTAR**
             - **ROI Destructor de Valor** ({display_roi:.1f}%).
             - **¿Por qué ocurre?**: Este segmento es **orgánico e insensible a ofertas** (compra sin necesidad de descuento) o el **costo de contactación + canibalización** supera con creces el valor neto del ticket incremental. Aplicar promociones aquí es regalar margen en clientes que comprarían de todos modos.
             - **Acción Táctica**: Cancelar campaña de cupones masivos. Reemplazar por campañas relacionales de posicionamiento de valor y fidelidad premium basadas en servicio de entrega prioritario.
@@ -1353,7 +1353,7 @@ with tab9:
     if pitch_mode:
         st.markdown("""
         <div class="pitch-guide">
-            <strong>🎤 Guía para el Pitch (Anexos Técnicos)</strong><br>
+            <strong>Guía para el Pitch (Anexos Técnicos)</strong><br>
             • **Garantía Técnica y Rigor Metodológico**: Usa esta pestaña para responder consultas de auditoría técnica o profundizar en la matemática del preprocesamiento de datos.<br>
             • Muestra la tasa de retención inicial, detalla las transformaciones (Log + Z-score) o demuestra la validez estadística de tus dos modelos LCA (las proyecciones PCA 2D y las tablas de calidad de clustering).
         </div>
@@ -1473,7 +1473,7 @@ with tab9:
         col_c1, col_c2 = st.columns(2)
         
         with col_c1:
-            st.write("#### 📊 Estabilización de Outliers: Antes vs Después")
+            st.write("#### Estabilización de Outliers: Antes vs Después")
             st.write("Para evitar que variables con escalas y outliers extremos (como el Gasto, que llega a **$61,282 USD** frente a una mediana de $845 USD) distorsionen las distancias en K-Means, es obligatorio aplicar la transformación `np.log1p` y estandarización `StandardScaler`. Compara las escalas:")
             
             outlier_view = st.selectbox(
@@ -1524,7 +1524,7 @@ with tab9:
             st.plotly_chart(fig_box_rfm, use_container_width=True)
             
         with col_c2:
-            st.write("#### 📈 Método del Codo: Optimización de K")
+            st.write("#### Método del Codo: Optimización de K")
             st.write("Realizamos un barrido de K-Means de $K=1..9$ sobre la matriz escalada. El quiebre en la inercia (la suma de distancias cuadradas internas) justifica matemáticamente que **$K=3$ es el número óptimo de segmentos**:")
             
             # Static global elbow curve (calculated once on full dataset for perfect mathematical stability)
@@ -1688,7 +1688,7 @@ with tab9:
             fig_sel_size.update_layout(template='plotly_white')
             st.plotly_chart(fig_sel_size, use_container_width=True)
             
-        st.info("💡 **Justificación Científica del BIC**: El Criterio de Información Bayesiano (BIC) penaliza fuertemente el número de parámetros del modelo a medida que aumenta el tamaño de la muestra ($N=7,285$). Aunque el BIC continúa descendiendo levemente en $K=4$, la **Entropía Normalizada y la interpretabilidad comercial de negocio** señalan que $K=3$ es la separación óptima y con el tamaño mínimo de segmento más robusto (24.5%).")
+        st.info("**Justificación Científica del BIC**: El Criterio de Información Bayesiano (BIC) penaliza fuertemente el número de parámetros del modelo a medida que aumenta el tamaño de la muestra ($N=7,285$). Aunque el BIC continúa descendiendo levemente en $K=4$, la **Entropía Normalizada y la interpretabilidad comercial de negocio** señalan que $K=3$ es la separación óptima y con el tamaño mínimo de segmento más robusto (24.5%).")
 
         st.markdown('<div class="section-header">️ Perfil Numérico Normalizado de Clases LCA (Heatmap)</div>', unsafe_allow_html=True)
         st.write("Visualizamos los promedios reales de las variables numéricas para cada clase latente demográfica en un heatmap normalizado para perfilar fortalezas y debilidades:")
