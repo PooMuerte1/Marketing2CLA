@@ -187,13 +187,13 @@ if filtered_df.empty:
     st.stop()
 
 # --- TABS ---
-tab1, tab7, tab2, tab3, tab4, tab6, tab5, tab8, tab9 = st.tabs([
+tab1, tab2, tab3, tab4, tab6, tab7, tab5, tab8, tab9 = st.tabs([
     "Contexto y Limpieza",
-    "Pérdida de Membresías (Churn)",
     "Segmentación RFM (K-Means)",
     "Segmentación Sociodemográfica (LCA)",
     "Matriz de Crossover",
     "Categorías por Segmento",
+    "Pérdida de Membresías (Churn)",
     "Estrategia de Promociones",
     "Simulador de ROI",
     "Anexos"
@@ -927,13 +927,7 @@ with tab6:
 # TAB 7: PÉRDIDA DE MEMBRESÍAS (CHURN)
 # ==========================================
 with tab7:
-    st.markdown('<div class="section-header">️ Pérdida de Membresías (Análisis de Churn)</div>', unsafe_allow_html=True)
-    st.write("""
-    Para que las campañas de marketing digital y los esfuerzos de fidelización sean sostenibles, la empresa debe identificar y mitigar la **tasa de cancelación (Churn)** de membresías. 
-    Este módulo analiza a los clientes que abandonaron la plataforma (**8.9% global / 715 clientes**) y establece las pautas estratégicas de retención antes de simular escenarios de campañas comerciales en el simulador de ROI.
-    """)
-    
-    # Churn Crossover Matrix Heatmap
+    # First: Churn Crossover Matrix Heatmap
     st.markdown('<div class="section-header">Matriz de Crossover de Fuga de Clientes (Tasa de Churn por Micro-segmento)</div>', unsafe_allow_html=True)
     st.write("""
     Esta matriz avanzada cruza los tres perfiles transaccionales (K-Means) con las tres clases demográficas (LCA) sobre la base completa de clientes para revelar la **Tasa de Abandono (Churn Rate %)** y la cantidad de cuentas canceladas en cada micro-segmento cruzado en tiempo real:
@@ -997,6 +991,13 @@ with tab7:
     )
     
     st.plotly_chart(fig_cross_churn, use_container_width=True)
+
+    # Second: Pérdida de Membresías (Análisis de Churn) and its intro text
+    st.markdown('<div class="section-header">Pérdida de Membresías (Análisis de Churn)</div>', unsafe_allow_html=True)
+    st.write("""
+    Para que las campañas de marketing digital y los esfuerzos de fidelización sean sostenibles, la empresa debe identificar y mitigar la **tasa de cancelación (Churn)** de membresías. 
+    Este módulo analiza a los clientes que abandonaron la plataforma (**8.9% global / 715 clientes**) y establece las pautas estratégicas de retención antes de simular escenarios de campañas comerciales en el simulador de ROI.
+    """)
     
     # Active vs Churned and Tier Churn Charts
     col_ch1, col_ch2 = st.columns(2)
