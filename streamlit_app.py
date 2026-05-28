@@ -268,7 +268,7 @@ with tab2:
     
     scale_choice = st.radio(
         "Seleccionar Escala para Gráficos de Dispersión (3D y 2D):",
-        options=["Escala Estandarizada (Log + Z-Score) — ¡Recomendado por su nula mezcla y nitidez! 💎", "Escala Real (Datos Brutos) — Muestra el sesgo de outliers en el negocio 📊"],
+        options=["Escala Estandarizada (Log + Z-Score)", "Escala Real (Datos Brutos)"],
         horizontal=True
     )
     use_std_data = "Estandarizada" in scale_choice
@@ -276,7 +276,7 @@ with tab2:
     col_hero1, col_hero2 = st.columns(2)
     
     with col_hero1:
-        st.write("#### 🌌 Mapa de Segmentación PCA 2D")
+        st.write("#### Mapa de Segmentación PCA 2D")
         st.write("Proyectamos el espacio transaccional de tres dimensiones en dos componentes principales (PCA), revelando **tres nubes de puntos con excelente separación geométrica** (el PCA es intrínsecamente estandarizado):")
         
         fig_pca_rfm_app = px.scatter(
@@ -294,7 +294,7 @@ with tab2:
         st.plotly_chart(fig_pca_rfm_app, use_container_width=True)
         
     with col_hero2:
-        st.write("#### 🌐 Espacio Transaccional 3D Interactivo")
+        st.write("#### Espacio Transaccional 3D Interactivo")
         st.write("Muestra las coordenadas en 3D del espacio transaccional. Mantén pulsado el botón izquierdo del mouse para rotar el gráfico y observar la distribución desde cualquier ángulo:")
         
         x_3d = 'recency_final' if use_std_data else 'days_since_last_purchase'
